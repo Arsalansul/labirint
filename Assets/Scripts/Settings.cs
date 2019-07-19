@@ -20,6 +20,7 @@ public class Settings : MonoBehaviour
     public class PlayerSettings
     {
         public GameObject PlayerGameObject;
+        public float speed;
     }
 
     public static Settings Instance { get; private set; }

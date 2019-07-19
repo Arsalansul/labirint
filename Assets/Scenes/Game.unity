@@ -645,6 +645,7 @@ MonoBehaviour:
   playerSettings:
     PlayerGameObject: {fileID: 8585730888453030915, guid: 4d9021bb3d37371458a1a13f8adee433,
       type: 3}
+    speed: 10
 --- !u!114 &1364132120
 MonoBehaviour:
   m_ObjectHideFlags: 0

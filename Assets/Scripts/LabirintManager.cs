@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class LabirintCreator : MonoBehaviour
+public class LabirintManager : MonoBehaviour
 {
     // для простоты вычислений левый нижний угол лабиринта в точке 0, 0, 0
     private void CreateWalls(CellManager cellManager, int labirintSize)
