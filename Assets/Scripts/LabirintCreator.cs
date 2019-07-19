@@ -10,15 +10,15 @@ public class LabirintCreator : MonoBehaviour
         Vector3 position = new Vector3(0.5f, 0, 0);
         Vector3 rotation = new Vector3(0, 0, 0);
         Vector3 deltaInRow = new Vector3(1, 0, 0);
-        Vector3 deltaInColumn = new Vector3(-Settings.Instance.gameSettings.labirintSize, 0, 1);
+        Vector3 deltaInColumn = new Vector3(-labirintSize, 0, 1);
         var cellDeltaPosition = new Vector3(0, 0, 0.5f);
 
         var wall = Cell.Wall.Down;
         for (int v = 0; v < 2; v++)
         {
-            for (int i = 0; i < Settings.Instance.gameSettings.labirintSize + 1; i++)
+            for (int i = 0; i < labirintSize + 1; i++)
             {
-                for (int j = 0; j < Settings.Instance.gameSettings.labirintSize; j++)
+                for (int j = 0; j < labirintSize; j++)
                 {
                     if (i == 0 || i == labirintSize)
                         Instantiate(Settings.Instance.wallSettings.WallGameObject, position, Quaternion.Euler(rotation), walls.transform);
@@ -34,7 +34,7 @@ public class LabirintCreator : MonoBehaviour
             position = new Vector3(0, 0, 0.5f);
             rotation = new Vector3(0, 90, 0);
             deltaInRow = new Vector3(0, 0, 1);
-            deltaInColumn = new Vector3(1, 0, -Settings.Instance.gameSettings.labirintSize);
+            deltaInColumn = new Vector3(1, 0, -labirintSize);
             wall = Cell.Wall.Left;
             cellDeltaPosition = new Vector3(0.5f, 0, 0);
         }

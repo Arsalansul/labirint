@@ -8,20 +8,17 @@ public class Game : MonoBehaviour
 {
     private CellManager cellManager;
     private LabirintCreator labirintCreator;
-    private int labirintSize;
 
     public Button generateLab;
 
     void Start()
     {
-        labirintSize = Settings.Instance.gameSettings.labirintSize;
-
         cellManager = new CellManager();
         labirintCreator = new LabirintCreator();
-        labirintCreator.GenerateLab(cellManager, labirintSize);
+        labirintCreator.GenerateLab(cellManager, Settings.Instance.gameSettings.labirintSize);
 
 
-        generateLab.onClick.AddListener(() => labirintCreator.GenerateLab(cellManager, labirintSize));
+        generateLab.onClick.AddListener(() => labirintCreator.GenerateLab(cellManager, Settings.Instance.gameSettings.labirintSize));
     }
 
     // Update is called once per frame
