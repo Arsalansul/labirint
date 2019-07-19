@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class CellManager : MonoBehaviour
 {
+    // для простоты вычислений левый нижний угол лабиринта в точке 0, 0, 0
     public Cell[,] cells;
 
-    private int labirintSize = Settings.Instance.gameSettings.labirintSize;
-
-    public void CreateCells()
+    public void CreateCells(int labirintSize)
     {
         cells = new Cell[labirintSize, labirintSize];
         for (int i = 0; i < labirintSize; i++)
@@ -36,9 +35,9 @@ public class CellManager : MonoBehaviour
         return vector;
     }
 
-    public Cell GetRandomNeighbourCellFromList(Cell cell, List<Cell> cellsList)
+    public Cell GetRandomNeighbourCellFromList(Cell cell, List<Cell> cellsList, int labirintSize)
     {
-        List<Cell> neighbourds = GetNeighbourds(cell);
+        List<Cell> neighbourds = GetNeighbourds(cell, labirintSize);
         while (neighbourds.Count > 0)
         {
             int index = Random.Range(0, neighbourds.Count);
@@ -52,7 +51,7 @@ public class CellManager : MonoBehaviour
         return null;
     }
 
-    private List<Cell> GetNeighbourds(Cell cell)
+    private List<Cell> GetNeighbourds(Cell cell, int labirintSize)
     {
         List<Cell> result = new List<Cell>();
         for (int i = -1; i < 2; i += 2)
