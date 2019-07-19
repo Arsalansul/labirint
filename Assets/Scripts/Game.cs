@@ -46,7 +46,7 @@ public class Game : MonoBehaviour
             {
                 for (int j = 0; j < Settings.Instance.gameSettings.labirintSize; j++)
                 {
-                    if (i==0 || i== 15)
+                    if (i==0 || i== labirintSize)
                         Instantiate(Settings.Instance.wallSettings.WallGameObject, position, Quaternion.Euler(rotation),walls.transform);
                     else if (cellManager.GetCellByTransform(position + cellDeltaPosition).Walls.Contains(wall))
                     {
@@ -78,7 +78,7 @@ public class Game : MonoBehaviour
             }
         }
 
-        Cell currentCell = cellManager.cells[0, 0]; //TODO random start cell
+        Cell currentCell = cellManager.cells[Random.Range(0, labirintSize), Random.Range(0, labirintSize)];
         unvisitedCells.Remove(currentCell);
 
         Stack<Cell> path = new Stack<Cell>();

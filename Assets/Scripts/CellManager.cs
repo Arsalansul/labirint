@@ -26,7 +26,7 @@ public class CellManager : MonoBehaviour
 
     public Cell GetCellByTransform(Vector3 vector3)
     {
-        return cells[(int)(vector3.x), (int)(vector3.z)];
+        return cells[(int)vector3.x, (int)vector3.z];
     }
 
     public Vector3 GetTransformByCell(Cell cell)
