@@ -78,7 +78,7 @@ public class CellManager : MonoBehaviour
         {
             Cell.Wall.Top,
             Cell.Wall.Right,
-            Cell.Wall.Down,
+            Cell.Wall.Bottom,
             Cell.Wall.Left
         };
     }
@@ -97,17 +97,44 @@ public class CellManager : MonoBehaviour
         }
         else if (cell1.y > cell2.y)
         {
-            cell1.Walls.Remove(Cell.Wall.Down);
+            cell1.Walls.Remove(Cell.Wall.Bottom);
             cell2.Walls.Remove(Cell.Wall.Top);
         }
         else if (cell1.y < cell2.y)
         {
             cell1.Walls.Remove(Cell.Wall.Top);
-            cell2.Walls.Remove(Cell.Wall.Down);
+            cell2.Walls.Remove(Cell.Wall.Bottom);
         }
         else
         {
             Debug.Log("equal cells");
+        }
+    }
+
+    public void RemoveWall(Cell cell, Cell.Wall wall)
+    {
+        switch (wall)
+        {
+            case Cell.Wall.Top:
+                if (cell.y == Settings.Instance.gameSettings.labirintSize-1) break;
+                cell.Walls.Remove(wall);
+                cells[cell.x, cell.y + 1].Walls.Remove(Cell.Wall.Bottom);
+                break;
+            case Cell.Wall.Right:
+                if (cell.x == Settings.Instance.gameSettings.labirintSize - 1) break;
+                cell.Walls.Remove(wall);
+                cells[cell.x+1, cell.y].Walls.Remove(Cell.Wall.Left);
+                break;
+            case Cell.Wall.Bottom:
+                if (cell.y == 0) break;
+                cell.Walls.Remove(wall);
+                cells[cell.x, cell.y - 1].Walls.Remove(Cell.Wall.Top);
+                break;
+            case Cell.Wall.Left:
+                if (cell.x == 0) break;
+                cell.Walls.Remove(wall);
+                cells[cell.x - 1, cell.y].Walls.Remove(Cell.Wall.Right);
+                break;
         }
     }
 
@@ -125,7 +152,7 @@ public class CellManager : MonoBehaviour
             {
                 result.Remove(cells[cell.x +1, cell.y]);
             }
-            else if (wall == Cell.Wall.Down && cell.y > 0)
+            else if (wall == Cell.Wall.Bottom && cell.y > 0)
             {
                 result.Remove(cells[cell.x, cell.y - 1]);
             }

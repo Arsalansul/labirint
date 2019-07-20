@@ -8,6 +8,7 @@ public class Settings : MonoBehaviour
     public class GameSettings
     {
         public int labirintSize;
+        [Range(0, 3)] public int labirintDifficulty;
     }
 
     [System.Serializable]

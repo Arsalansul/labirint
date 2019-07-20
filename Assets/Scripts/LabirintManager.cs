@@ -13,7 +13,7 @@ public class LabirintManager : MonoBehaviour
         Vector3 deltaInColumn = new Vector3(-labirintSize, 0, 1);
         var cellDeltaPosition = new Vector3(0, 0, 0.5f);
 
-        var wall = Cell.Wall.Down;
+        var wall = Cell.Wall.Bottom;
         for (int v = 0; v < 2; v++)
         {
             for (int i = 0; i < labirintSize + 1; i++)
@@ -79,11 +79,21 @@ public class LabirintManager : MonoBehaviour
         }
     }
 
+    private void Difficulty(CellManager cellManager, int difficulty)
+    {
+        foreach (var cell in cellManager.cells)
+        {
+            if (cell.Walls.Count > difficulty)
+                cellManager.RemoveWall(cell, cell.Walls[Random.Range(0, cell.Walls.Count)]);
+        }
+    }
+
     public void GenerateLab(CellManager cellManager, int labirintSize)
     {
         Destroy(GameObject.Find("Walls"));
         cellManager.CreateCells(labirintSize);
         CreateLabirint(cellManager, labirintSize);
+        Difficulty(cellManager, Settings.Instance.gameSettings.labirintDifficulty);
         CreateWalls(cellManager, labirintSize);
     }
 }

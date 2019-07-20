@@ -17,7 +17,7 @@ public class Cell
     {
         Top,
         Right,
-        Down,
+        Bottom,
         Left
     }
 

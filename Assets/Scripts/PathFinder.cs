@@ -11,13 +11,15 @@ public class PathFinder
 
     private List<Cell> RemoveCellsContoinedInOpenList(List<Cell> list)
     {
-        foreach (var cell in list)
+        var result = new List<Cell>();
+        result = list;
+        for (int i =0; i< result.Count ; i++)
         {
-            if (openList.Contains(cell))
-                list.Remove(cell);
+            if (openList.Contains(result[i]))
+                result.Remove(result[i]);
         }
 
-        return list;
+        return result;
     }
 
     private int CellDist(Cell cell_1, Cell cell_2)
@@ -49,8 +51,8 @@ public class PathFinder
             if (currentCell == endCell)
                 break;
 
-            var neighbourds = cellManager.GetPassableNeighbours(currentCell, labirintSize);
-            foreach (var cell in RemoveCellsContoinedInOpenList(neighbourds))
+            var passableNeighbours = cellManager.GetPassableNeighbours(currentCell, labirintSize);
+            foreach (var cell in RemoveCellsContoinedInOpenList(passableNeighbours))
             {
                 int tentativeScore = currentCell.g + 1; //distance from start to the neighbor through current
                 if (closedList.Contains(cell) && tentativeScore >= cell.g) continue;

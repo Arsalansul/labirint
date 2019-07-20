@@ -655,6 +655,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameSettings:
     labirintSize: 15
+    labirintDifficulty: 1
   wallSettings:
     WallGameObject: {fileID: 5722349213252135693, guid: bd9559a54215b4645bc361b98a37bad3,
       type: 3}
