@@ -13,15 +13,15 @@ public class Game : MonoBehaviour
 
     private GameObject player;
     private GameObject enemy;
-    private GameObject coin;
-
-    public Button generateLab;
+    private CoinManager coinManager;
 
     void Start()
     {
-        cellManager = new CellManager();
+        cellManager = CellManager.Instance;
         labirintManager = new LabirintManager();
         labirintManager.GenerateLab();
+
+        coinManager = new CoinManager();
 
         var playerSpawnPosition = cellManager.GetTransformByCell(cellManager.cells[
             (int) Settings.Instance.gameSettings.labirintSize / 2,
@@ -33,20 +33,12 @@ public class Game : MonoBehaviour
             Random.Range(0, Settings.Instance.gameSettings.labirintSize)]);
         enemy = Instantiate(Settings.Instance.enemySettings.EnemyrGameObject, enemySpawnPosition, Quaternion.identity);
 
-        var coinSpawnPosition = cellManager.GetTransformByCell(cellManager.cells[
-            Random.Range(0, Settings.Instance.gameSettings.labirintSize), 
-            Random.Range(0, Settings.Instance.gameSettings.labirintSize)]);
-        coin = Instantiate(Settings.Instance.coinSettings.CoinGameObject, coinSpawnPosition, Quaternion.identity);
+        coinManager.CoinsSpawn(2);
 
         mainCamera = Camera.main;
         mainCamera.transform.position = player.transform.position + mainCamera.GetComponent<MainCamera>().offset;
         mainCamera.transform.eulerAngles = new Vector3(90, 0, 0);
         mainCamera.GetComponent<MainCamera>().target = player.transform;
-
-#if DEBUG
-        generateLab.gameObject.SetActive(true);
-        generateLab.onClick.AddListener(() => labirintManager.GenerateLab());
-#endif
     }
 
     // Update is called once per frame
@@ -61,6 +53,12 @@ public class Game : MonoBehaviour
             enemy.GetComponent<LineRenderer>().widthMultiplier = 0.3f;
             enemy.GetComponent<EnemyController>().DrawPath();
         }
+
+        if (Input.GetKeyDown(KeyCode.L))
+            labirintManager.GenerateLab();
+
+        if (Input.GetKeyDown(KeyCode.C))
+            coinManager.CoinsSpawn(5);
 #endif
     }
 
