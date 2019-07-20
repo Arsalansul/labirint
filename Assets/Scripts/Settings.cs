@@ -31,12 +31,19 @@ public class Settings : MonoBehaviour
         public float speed;
     }
 
+    [System.Serializable]
+    public class CoinSettings
+    {
+        public GameObject CoinGameObject;
+    }
+
     public static Settings Instance { get; private set; }
 
     public GameSettings gameSettings;
     public WallSettings wallSettings;
     public PlayerSettings playerSettings;
     public EnemySettings enemySettings;
+    public CoinSettings coinSettings;
 
     private void Awake()
     {

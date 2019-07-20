@@ -7,8 +7,16 @@ public class CellManager : MonoBehaviour
     // для простоты вычислений левый нижний угол лабиринта в точке 0, 0, 0
     public Cell[,] cells;
 
-    public void CreateCells(int labirintSize)
+    public static CellManager Instance { get; private set; }
+
+    private void Awake()
     {
+        Instance = this;
+    }
+
+    public void CreateCells()
+    {
+        var labirintSize = Settings.Instance.gameSettings.labirintSize;
         cells = new Cell[labirintSize, labirintSize];
         for (int i = 0; i < labirintSize; i++)
         {
@@ -35,9 +43,9 @@ public class CellManager : MonoBehaviour
         return vector;
     }
 
-    public Cell GetRandomNeighbourCellContainedInList(Cell cell, List<Cell> cellsList, int labirintSize)
+    public Cell GetRandomNeighbourCellContainedInList(Cell cell, List<Cell> cellsList)
     {
-        List<Cell> neighbourds = GetNeighbours(cell, labirintSize);
+        List<Cell> neighbourds = GetNeighbours(cell);
         while (neighbourds.Count > 0)
         {
             int index = Random.Range(0, neighbourds.Count);
@@ -51,8 +59,9 @@ public class CellManager : MonoBehaviour
         return null;
     }
 
-    private List<Cell> GetNeighbours(Cell cell, int labirintSize)
+    private List<Cell> GetNeighbours(Cell cell)
     {
+        var labirintSize = Settings.Instance.gameSettings.labirintSize;
         List<Cell> result = new List<Cell>();
         for (int i = -1; i < 2; i += 2)
         {
@@ -113,15 +122,16 @@ public class CellManager : MonoBehaviour
 
     public void RemoveWall(Cell cell, Cell.Wall wall)
     {
+        var labirintSize = Settings.Instance.gameSettings.labirintSize;
         switch (wall)
         {
             case Cell.Wall.Top:
-                if (cell.y == Settings.Instance.gameSettings.labirintSize-1) break;
+                if (cell.y == labirintSize - 1) break;
                 cell.Walls.Remove(wall);
                 cells[cell.x, cell.y + 1].Walls.Remove(Cell.Wall.Bottom);
                 break;
             case Cell.Wall.Right:
-                if (cell.x == Settings.Instance.gameSettings.labirintSize - 1) break;
+                if (cell.x == labirintSize - 1) break;
                 cell.Walls.Remove(wall);
                 cells[cell.x+1, cell.y].Walls.Remove(Cell.Wall.Left);
                 break;
@@ -138,9 +148,10 @@ public class CellManager : MonoBehaviour
         }
     }
 
-    public List<Cell> GetPassableNeighbours(Cell cell, int labirintSize)
+    public List<Cell> GetPassableNeighbours(Cell cell)
     {
-        var result = GetNeighbours(cell, labirintSize);
+        var result = GetNeighbours(cell);
+        var labirintSize = Settings.Instance.gameSettings.labirintSize;
 
         foreach (var wall in cell.Walls)
         {

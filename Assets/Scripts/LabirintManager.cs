@@ -3,9 +3,12 @@ using UnityEngine;
 
 public class LabirintManager : MonoBehaviour
 {
+    private CellManager cellManager = CellManager.Instance;
+
     // для простоты вычислений левый нижний угол лабиринта в точке 0, 0, 0
-    private void CreateWalls(CellManager cellManager, int labirintSize)
+    private void CreateWalls()
     {
+        var labirintSize = Settings.Instance.gameSettings.labirintSize;
         GameObject walls = new GameObject("Walls");
         Vector3 position = new Vector3(0.5f, 0, 0);
         Vector3 rotation = new Vector3(0, 0, 0);
@@ -41,8 +44,9 @@ public class LabirintManager : MonoBehaviour
     }
 
 
-    private void CreateLabirint(CellManager cellManager, int labirintSize)
+    private void CreateLabirint()
     {
+        var labirintSize = Settings.Instance.gameSettings.labirintSize;
         List<Cell> unvisitedCells = new List<Cell>();
         for (int i = 0; i < labirintSize; i++)
         {
@@ -58,7 +62,7 @@ public class LabirintManager : MonoBehaviour
         Stack<Cell> path = new Stack<Cell>();
         while (unvisitedCells.Count > 0)
         {
-            var randomUnvisitedNeighbour = cellManager.GetRandomNeighbourCellContainedInList(currentCell, unvisitedCells, labirintSize);
+            var randomUnvisitedNeighbour = cellManager.GetRandomNeighbourCellContainedInList(currentCell, unvisitedCells);
             if (randomUnvisitedNeighbour != null)
             {
                 path.Push(currentCell);
@@ -79,7 +83,7 @@ public class LabirintManager : MonoBehaviour
         }
     }
 
-    private void Difficulty(CellManager cellManager, int difficulty)
+    private void Difficulty(int difficulty)
     {
         foreach (var cell in cellManager.cells)
         {
@@ -88,12 +92,13 @@ public class LabirintManager : MonoBehaviour
         }
     }
 
-    public void GenerateLab(CellManager cellManager, int labirintSize)
+    public void GenerateLab()
     {
+        var labirintSize = Settings.Instance.gameSettings.labirintSize;
         Destroy(GameObject.Find("Walls"));
-        cellManager.CreateCells(labirintSize);
-        CreateLabirint(cellManager, labirintSize);
-        Difficulty(cellManager, Settings.Instance.gameSettings.labirintDifficulty);
-        CreateWalls(cellManager, labirintSize);
+        cellManager.CreateCells();
+        CreateLabirint();
+        Difficulty(Settings.Instance.gameSettings.labirintDifficulty);
+        CreateWalls();
     }
 }

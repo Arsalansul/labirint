@@ -12,8 +12,8 @@ public class Game : MonoBehaviour
     private LabirintManager labirintManager;
 
     private GameObject player;
-
     private GameObject enemy;
+    private GameObject coin;
 
     public Button generateLab;
 
@@ -21,16 +21,22 @@ public class Game : MonoBehaviour
     {
         cellManager = new CellManager();
         labirintManager = new LabirintManager();
-        labirintManager.GenerateLab(cellManager, Settings.Instance.gameSettings.labirintSize);
+        labirintManager.GenerateLab();
 
         var playerSpawnPosition = cellManager.GetTransformByCell(cellManager.cells[
             (int) Settings.Instance.gameSettings.labirintSize / 2,
             (int) Settings.Instance.gameSettings.labirintSize / 2]);
-        player = Instantiate(Settings.Instance.playerSettings.PlayerGameObject, playerSpawnPosition,
-            Quaternion.identity);
+        player = Instantiate(Settings.Instance.playerSettings.PlayerGameObject, playerSpawnPosition, Quaternion.identity);
 
-        enemy = Instantiate(Settings.Instance.enemySettings.EnemyrGameObject, playerSpawnPosition + new Vector3(3, 0, 3),
-            Quaternion.identity);
+        var enemySpawnPosition = cellManager.GetTransformByCell(cellManager.cells[
+            Random.Range(0, Settings.Instance.gameSettings.labirintSize), 
+            Random.Range(0, Settings.Instance.gameSettings.labirintSize)]);
+        enemy = Instantiate(Settings.Instance.enemySettings.EnemyrGameObject, enemySpawnPosition, Quaternion.identity);
+
+        var coinSpawnPosition = cellManager.GetTransformByCell(cellManager.cells[
+            Random.Range(0, Settings.Instance.gameSettings.labirintSize), 
+            Random.Range(0, Settings.Instance.gameSettings.labirintSize)]);
+        coin = Instantiate(Settings.Instance.coinSettings.CoinGameObject, coinSpawnPosition, Quaternion.identity);
 
         mainCamera = Camera.main;
         mainCamera.transform.position = player.transform.position + mainCamera.GetComponent<MainCamera>().offset;
@@ -39,21 +45,21 @@ public class Game : MonoBehaviour
 
 #if DEBUG
         generateLab.gameObject.SetActive(true);
-        generateLab.onClick.AddListener(() => labirintManager.GenerateLab(cellManager, Settings.Instance.gameSettings.labirintSize));
+        generateLab.onClick.AddListener(() => labirintManager.GenerateLab());
 #endif
     }
 
     // Update is called once per frame
     void Update()
     {
-        enemy.GetComponent<EnemyController>().Move(cellManager, player.transform, Settings.Instance.gameSettings.labirintSize);
+        enemy.GetComponent<EnemyController>().Move(player.transform);
 
 #if DEBUG
         if (Input.GetKeyDown(KeyCode.P))
         {
             enemy.AddComponent<LineRenderer>();
             enemy.GetComponent<LineRenderer>().widthMultiplier = 0.3f;
-            enemy.GetComponent<EnemyController>().DrawPath(cellManager);
+            enemy.GetComponent<EnemyController>().DrawPath();
         }
 #endif
     }

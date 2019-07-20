@@ -6,33 +6,35 @@ public class EnemyController : MonoBehaviour
 {
     private List<Cell> moveCells;
     private Vector3 nextPosition;
+    private CellManager cellManager = CellManager.Instance;
+
     PathFinder pathFinder = new PathFinder();
 
-    private void GoToNextPoint(CellManager cellManager)
+    private void GoToNextPoint()
     {
         if (moveCells == null) return;
         nextPosition = cellManager.GetTransformByCell(moveCells[0]);  //отправляем на следующую клетку
         moveCells.RemoveAt(0); //удаляем клетку на которой стоим из массива
     }
 
-    private void GetMoveCells(CellManager cellManager, Transform target, int labirintSize)
+    private void GetMoveCells(Transform target)
     {
-        moveCells = pathFinder.GetPath(cellManager.GetCellByTransform(transform.position), cellManager.GetCellByTransform(target.position), cellManager, labirintSize);
+        moveCells = pathFinder.GetPath(cellManager.GetCellByTransform(transform.position), cellManager.GetCellByTransform(target.position));
     }
 
-    public void Move(CellManager cellManager, Transform target, int labirintSize)
+    public void Move(Transform target)
     {
         if (cellManager.GetCellByTransform(transform.position) ==
             cellManager.GetCellByTransform(target.position)) return;
         if (transform.position == nextPosition || moveCells==null)
         {
-            GetMoveCells(cellManager, target, labirintSize);
-            GoToNextPoint(cellManager);
+            GetMoveCells(target);
+            GoToNextPoint();
         }
         transform.position = Vector3.MoveTowards(transform.position, nextPosition, Time.deltaTime * Settings.Instance.enemySettings.speed);
     }
 
-    public void DrawPath(CellManager cellManager)
+    public void DrawPath()
     {
         var lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.positionCount = moveCells.Count + 1;

@@ -7,6 +7,8 @@ public class PathFinder
     public List<Cell> openList = new List<Cell>();
     public List<Cell> closedList = new List<Cell>();
 
+    private CellManager cellManager = CellManager.Instance;
+    
     //ищим соседние ячейки через которые можем пройти НЕ из opneList
 
     private List<Cell> RemoveCellsContoinedInOpenList(List<Cell> list)
@@ -31,7 +33,7 @@ public class PathFinder
         return result;
     }
 
-    private void GetClosedList(Cell currentCell, Cell endCell, CellManager cellManager, int labirintSize)
+    private void GetClosedList(Cell currentCell, Cell endCell)
     {
         closedList.Clear();
         openList.Clear();
@@ -51,7 +53,7 @@ public class PathFinder
             if (currentCell == endCell)
                 break;
 
-            var passableNeighbours = cellManager.GetPassableNeighbours(currentCell, labirintSize);
+            var passableNeighbours = cellManager.GetPassableNeighbours(currentCell);
             foreach (var cell in RemoveCellsContoinedInOpenList(passableNeighbours))
             {
                 int tentativeScore = currentCell.g + 1; //distance from start to the neighbor through current
@@ -67,9 +69,9 @@ public class PathFinder
         }
     }
 
-    public List<Cell> GetPath(Cell start, Cell target, CellManager cellManager, int labirintSize)
+    public List<Cell> GetPath(Cell start, Cell target)
     {
-        GetClosedList(start, target, cellManager, labirintSize);
+        GetClosedList(start, target);
 
         if (closedList.Contains(target))
         {

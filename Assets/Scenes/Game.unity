@@ -480,7 +480,7 @@ Camera:
   far clip plane: 100
   field of view: 60
   orthographic: 1
-  orthographic size: 2
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -667,6 +667,9 @@ MonoBehaviour:
     EnemyrGameObject: {fileID: 5816898119429619213, guid: 0f0ee74bbe0206849bb3e25c9d3088bc,
       type: 3}
     speed: 9
+  coinSettings:
+    CoinGameObject: {fileID: 2814875195187517914, guid: 594c25eff6e824d4fa70855b58b7a1e7,
+      type: 3}
 --- !u!114 &1364132120
 MonoBehaviour:
   m_ObjectHideFlags: 0
