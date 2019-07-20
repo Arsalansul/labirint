@@ -37,7 +37,7 @@ public class CellManager : MonoBehaviour
 
     public Cell GetRandomNeighbourCellContainedInList(Cell cell, List<Cell> cellsList, int labirintSize)
     {
-        List<Cell> neighbourds = GetNeighbourds(cell, labirintSize);
+        List<Cell> neighbourds = GetNeighbours(cell, labirintSize);
         while (neighbourds.Count > 0)
         {
             int index = Random.Range(0, neighbourds.Count);
@@ -51,7 +51,7 @@ public class CellManager : MonoBehaviour
         return null;
     }
 
-    private List<Cell> GetNeighbourds(Cell cell, int labirintSize)
+    private List<Cell> GetNeighbours(Cell cell, int labirintSize)
     {
         List<Cell> result = new List<Cell>();
         for (int i = -1; i < 2; i += 2)
@@ -111,9 +111,9 @@ public class CellManager : MonoBehaviour
         }
     }
 
-    public List<Cell> GetPassableNeighbourds(Cell cell, int labirintSize)
+    public List<Cell> GetPassableNeighbours(Cell cell, int labirintSize)
     {
-        var result = GetNeighbourds(cell, labirintSize);
+        var result = GetNeighbours(cell, labirintSize);
 
         foreach (var wall in cell.Walls)
         {

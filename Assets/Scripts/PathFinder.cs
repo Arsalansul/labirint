@@ -49,7 +49,7 @@ public class PathFinder
             if (currentCell == endCell)
                 break;
 
-            var neighbourds = cellManager.GetPassableNeighbourds(currentCell, labirintSize);
+            var neighbourds = cellManager.GetPassableNeighbours(currentCell, labirintSize);
             foreach (var cell in RemoveCellsContoinedInOpenList(neighbourds))
             {
                 int tentativeScore = currentCell.g + 1; //distance from start to the neighbor through current
