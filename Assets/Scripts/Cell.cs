@@ -7,8 +7,6 @@ public class Cell
 
     public int g, h, f;
 
-    public bool passable;
-
     public List<Cell> CellCanMoveTo = new List<Cell>();
 
     public List<Cell> UnvisitedNeighbour = new List<Cell>();

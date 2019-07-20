@@ -35,7 +35,7 @@ public class CellManager : MonoBehaviour
         return vector;
     }
 
-    public Cell GetRandomNeighbourCellFromList(Cell cell, List<Cell> cellsList, int labirintSize)
+    public Cell GetRandomNeighbourCellContainedInList(Cell cell, List<Cell> cellsList, int labirintSize)
     {
         List<Cell> neighbourds = GetNeighbourds(cell, labirintSize);
         while (neighbourds.Count > 0)
@@ -74,11 +74,13 @@ public class CellManager : MonoBehaviour
 
     private void SetWalls(Cell cell)
     {
-        cell.Walls = new List<Cell.Wall>();
-        cell.Walls.Add(Cell.Wall.Top);
-        cell.Walls.Add(Cell.Wall.Right);
-        cell.Walls.Add(Cell.Wall.Down);
-        cell.Walls.Add(Cell.Wall.Left);
+        cell.Walls = new List<Cell.Wall>
+        {
+            Cell.Wall.Top,
+            Cell.Wall.Right,
+            Cell.Wall.Down,
+            Cell.Wall.Left
+        };
     }
 
     public void RemoveWall(Cell cell1, Cell cell2)
@@ -107,5 +109,32 @@ public class CellManager : MonoBehaviour
         {
             Debug.Log("equal cells");
         }
+    }
+
+    public List<Cell> GetPassableNeighbourds(Cell cell, int labirintSize)
+    {
+        var result = GetNeighbourds(cell, labirintSize);
+
+        foreach (var wall in cell.Walls)
+        {
+            if (wall == Cell.Wall.Top && cell.y <labirintSize - 1)
+            {
+                result.Remove(cells[cell.x, cell.y + 1]);
+            }
+            else if (wall == Cell.Wall.Right && cell.x < labirintSize - 1)
+            {
+                result.Remove(cells[cell.x +1, cell.y]);
+            }
+            else if (wall == Cell.Wall.Down && cell.y > 0)
+            {
+                result.Remove(cells[cell.x, cell.y - 1]);
+            }
+            else if (wall == Cell.Wall.Left && cell.x > 0)
+            {
+                result.Remove(cells[cell.x - 1, cell.y]);
+            }
+        }
+
+        return result;
     }
 }

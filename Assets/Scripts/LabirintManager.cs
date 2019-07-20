@@ -58,7 +58,7 @@ public class LabirintManager : MonoBehaviour
         Stack<Cell> path = new Stack<Cell>();
         while (unvisitedCells.Count > 0)
         {
-            var randomUnvisitedNeighbour = cellManager.GetRandomNeighbourCellFromList(currentCell, unvisitedCells, labirintSize);
+            var randomUnvisitedNeighbour = cellManager.GetRandomNeighbourCellContainedInList(currentCell, unvisitedCells, labirintSize);
             if (randomUnvisitedNeighbour != null)
             {
                 path.Push(currentCell);
