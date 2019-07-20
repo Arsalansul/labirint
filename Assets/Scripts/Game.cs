@@ -13,6 +13,8 @@ public class Game : MonoBehaviour
 
     private GameObject player;
 
+    private GameObject enemy;
+
     public Button generateLab;
 
     void Start()
@@ -25,6 +27,9 @@ public class Game : MonoBehaviour
             (int) Settings.Instance.gameSettings.labirintSize / 2,
             (int) Settings.Instance.gameSettings.labirintSize / 2]);
         player = Instantiate(Settings.Instance.playerSettings.PlayerGameObject, playerSpawnPosition,
+            Quaternion.identity);
+
+        enemy = Instantiate(Settings.Instance.enemySettings.EnemyrGameObject, playerSpawnPosition + new Vector3(3, 0, 3),
             Quaternion.identity);
 
         mainCamera = Camera.main;
@@ -41,7 +46,16 @@ public class Game : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        enemy.GetComponent<EnemyController>().Move(cellManager, player.transform, Settings.Instance.gameSettings.labirintSize);
+
+#if DEBUG
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            enemy.AddComponent<LineRenderer>();
+            enemy.GetComponent<LineRenderer>().widthMultiplier = 0.3f;
+            enemy.GetComponent<EnemyController>().DrawPath(cellManager);
+        }
+#endif
     }
 
     

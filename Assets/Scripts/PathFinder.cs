@@ -61,7 +61,6 @@ public class PathFinder
                 if (!openList.Contains(cell))
                     openList.Add(cell);
             }
-
             openList.Sort((x, y) => x.f.CompareTo(y.f));
         }
     }
@@ -81,6 +80,7 @@ public class PathFinder
                 result.Add(current);
             }
             result.Reverse();
+            result.Remove(start);
             return result;
         }
 

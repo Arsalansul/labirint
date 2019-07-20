@@ -23,11 +23,19 @@ public class Settings : MonoBehaviour
         public float speed;
     }
 
+    [System.Serializable]
+    public class EnemySettings
+    {
+        public GameObject EnemyrGameObject;
+        public float speed;
+    }
+
     public static Settings Instance { get; private set; }
 
     public GameSettings gameSettings;
     public WallSettings wallSettings;
     public PlayerSettings playerSettings;
+    public EnemySettings enemySettings;
 
     private void Awake()
     {
