@@ -7,11 +7,8 @@ using UnityEngine.UI;
 public class Main : MonoBehaviour
 {
     public Button gameButton;
-
     public Button quitButton;
-
-    private Game game;
-
+    
     // Start is called before the first frame update
     void Start()
     {

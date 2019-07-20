@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
+    private Camera mainCamera;
+
     private CellManager cellManager;
     private LabirintManager labirintManager;
 
@@ -24,6 +26,12 @@ public class Game : MonoBehaviour
             (int) Settings.Instance.gameSettings.labirintSize / 2]);
         player = Instantiate(Settings.Instance.playerSettings.PlayerGameObject, playerSpawnPosition,
             Quaternion.identity);
+
+        mainCamera = Camera.main;
+        mainCamera.transform.position = player.transform.position + mainCamera.GetComponent<MainCamera>().offset;
+        mainCamera.transform.eulerAngles = new Vector3(90, 0, 0);
+        mainCamera.GetComponent<MainCamera>().target = player.transform;
+
         generateLab.onClick.AddListener(() => labirintManager.GenerateLab(cellManager, Settings.Instance.gameSettings.labirintSize));
     }
 
