@@ -32,7 +32,10 @@ public class Game : MonoBehaviour
         mainCamera.transform.eulerAngles = new Vector3(90, 0, 0);
         mainCamera.GetComponent<MainCamera>().target = player.transform;
 
+#if DEBUG
+        generateLab.gameObject.SetActive(true);
         generateLab.onClick.AddListener(() => labirintManager.GenerateLab(cellManager, Settings.Instance.gameSettings.labirintSize));
+#endif
     }
 
     // Update is called once per frame
