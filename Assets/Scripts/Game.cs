@@ -13,6 +13,7 @@ public class Game : MonoBehaviour
 
     private GameObject player;
     private GameObject enemy;
+    private EnemyController enemyController;
     private CoinManager coinManager;
 
     void Start()
@@ -32,6 +33,7 @@ public class Game : MonoBehaviour
             Random.Range(0, Settings.Instance.gameSettings.labirintSize), 
             Random.Range(0, Settings.Instance.gameSettings.labirintSize)]);
         enemy = Instantiate(Settings.Instance.enemySettings.EnemyrGameObject, enemySpawnPosition, Quaternion.identity);
+        enemyController = enemy.GetComponent<EnemyController>();
 
         coinManager.CoinsSpawn(2);
 
@@ -44,7 +46,7 @@ public class Game : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        enemy.GetComponent<EnemyController>().Move(player.transform, 3, 5); //TODO сделать зависимость от уровня
+        enemyController.Move(player.transform, 3, 5); //TODO сделать зависимость от уровня
 
 #if DEBUG
         if (Input.GetKeyDown(KeyCode.P))

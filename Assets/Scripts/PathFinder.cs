@@ -9,7 +9,7 @@ public class PathFinder
 
     private CellManager cellManager = CellManager.Instance;
     
-    //ищим соседние ячейки через которые можем пройти НЕ из opneList
+    //ищем соседние ячейки через которые можем пройти НЕ из opneList
 
     private List<Cell> RemoveCellsContoinedInOpenList(List<Cell> list)
     {
