@@ -44,7 +44,7 @@ public class Game : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        enemy.GetComponent<EnemyController>().Move(player.transform);
+        enemy.GetComponent<EnemyController>().Move(player.transform, 3, 5); //TODO сделать зависимость от уровня
 
 #if DEBUG
         if (Input.GetKeyDown(KeyCode.P))

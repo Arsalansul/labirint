@@ -43,7 +43,6 @@ public class CoinManager : MonoBehaviour
                     pathMinSize = path.Count;
                 }
             }
-            Debug.Log(pathMinSize);
             result = cellManager.GetTransformByCell(randomCell);
         }
 

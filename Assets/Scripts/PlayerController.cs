@@ -4,16 +4,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private CharacterController controller;
-
-    private bool moveAxisX;
-
-    private bool moveAxisY;
+    private Vector3 nextPosition;
+    private CellManager cellManager = CellManager.Instance;
 
     // Start is called before the first frame update
     void Start()
     {
-        controller = GetComponent<CharacterController>();
+        nextPosition = transform.position;
     }
 
     // Update is called once per frame
@@ -24,10 +21,23 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+        if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0 || transform.position != nextPosition)
         {
-            controller.SimpleMove(new Vector3(Input.GetAxis("Horizontal") * Settings.Instance.playerSettings.speed, 0,
-                Input.GetAxis("Vertical") * Settings.Instance.playerSettings.speed));
+            transform.position = Vector3.MoveTowards(transform.position, nextPosition, Time.deltaTime * Settings.Instance.enemySettings.speed);
+            if (transform.position != nextPosition) return;
+            GoToNextPoint();
         }
+    }
+
+    private void GoToNextPoint()
+    {
+        var currentCell = cellManager.GetCellByTransform(transform.position);
+        var passableNeighbours = cellManager.GetPassableNeighbours(currentCell);
+
+        var moveVector = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
+        Debug.Log(moveVector);
+        var nextCell = cellManager.cells[currentCell.x + (int) moveVector.x, currentCell.y + (int) moveVector.z];
+        if (passableNeighbours.Contains(nextCell))
+            nextPosition = cellManager.GetTransformByCell(nextCell);
     }
 }

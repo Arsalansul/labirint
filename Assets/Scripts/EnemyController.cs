@@ -7,6 +7,7 @@ public class EnemyController : MonoBehaviour
     private List<Cell> moveCells;
     private Vector3 nextPosition;
     private CellManager cellManager = CellManager.Instance;
+    private bool targetFound;
 
     PathFinder pathFinder = new PathFinder();
 
@@ -22,10 +23,14 @@ public class EnemyController : MonoBehaviour
         moveCells = pathFinder.GetPath(cellManager.GetCellByTransform(transform.position), cellManager.GetCellByTransform(target.position));
     }
 
-    public void Move(Transform target)
+    public void Move(Transform target, int findDist, int lostDist)
     {
-        if (cellManager.GetCellByTransform(transform.position) ==
-            cellManager.GetCellByTransform(target.position)) return;
+        var cellEnemy = cellManager.GetCellByTransform(transform.position);
+        var cellTarget = cellManager.GetCellByTransform(target.position);
+
+        Radar(target, findDist, lostDist);
+
+        if (cellEnemy == cellTarget || !targetFound) return;
         if (transform.position == nextPosition || moveCells==null)
         {
             GetMoveCells(target);
@@ -46,5 +51,17 @@ public class EnemyController : MonoBehaviour
             index++;
             lineRenderer.SetPosition(index, cellManager.GetTransformByCell(cell));
         }
+    }
+
+    private void Radar(Transform target, int findDist, int lostDist)
+    {
+        var cellEnemy = cellManager.GetCellByTransform(transform.position);
+        var cellTarget = cellManager.GetCellByTransform(target.position);
+
+        var distSq = (cellTarget.x - cellEnemy.x) * (cellTarget.x - cellEnemy.x) +
+                     (cellTarget.y - cellEnemy.y) * (cellTarget.y - cellEnemy.y);
+
+        if (distSq < findDist * findDist) targetFound = true;
+        if (distSq > lostDist * lostDist) targetFound = false;
     }
 }
