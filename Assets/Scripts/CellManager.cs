@@ -154,7 +154,6 @@ namespace Assets.Scripts
 
         public int CellWallsCount(int cell)
         {
-            var cellWalls = cell & CellManager.maskAllWalls;
             var result = 0;
             for (int i = 0; i < 4; i++)
             {
