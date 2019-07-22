@@ -23,6 +23,7 @@ namespace Assets.Scripts
 
             settings = new Settings();
             settings.labirintSize = 15;
+            settings.labirintDifficulty = 2;
 
             canvasGameObject = GameObject.Find("Canvas");
             

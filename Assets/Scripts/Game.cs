@@ -23,7 +23,7 @@ namespace Assets.Scripts
         {
             wallsCreator = new WallsCreator();
             wallsCreator.WallGameObject = Resources.Load<GameObject>("Prefabs/Wall");
-            labirintManager.CreateLabirint();
+            labirintManager.CreateLabirint(settings);
             wallsCreator.CreateWalls(cellManager, settings);
         }
 

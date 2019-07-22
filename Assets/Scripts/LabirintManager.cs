@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts
+﻿using UnityEngine;
+
+namespace Assets.Scripts
 {
     public class LabirintManager
     {
@@ -9,7 +11,7 @@
             cellManager = _cellManager;
         }
 
-        public void CreateLabirint()
+        public void CreateLabirint(Settings settings)
         {
             var cells = cellManager.cells;
             cellManager.Visited(0);
@@ -22,7 +24,7 @@
             {
                 if ((cells[currentCellIndex] & CellManager.maskAllNeighbours) != 0)
                 {
-                    int randomUnvisitedNeghbourIndex = currentCellIndex + cellManager.GetRandomUnvisitedNeghbourIndex(cells[currentCellIndex]);
+                    int randomUnvisitedNeghbourIndex = currentCellIndex + cellManager.GetRandomUnvisitedNeghbourRelativePosition(cells[currentCellIndex]);
                     cellManager.RemoveWall(currentCellIndex, randomUnvisitedNeghbourIndex);
 
                     cells[randomUnvisitedNeghbourIndex] &= ~CellManager.maskCameFromLC;
@@ -35,6 +37,27 @@
                 else //if (path.Count > 0)
                 {
                     currentCellIndex = (cells[currentCellIndex] & CellManager.maskCameFromLC) >> 9; //TODO
+                }
+            }
+
+            ChangeDifficulty(settings.labirintDifficulty);
+        }
+
+        private void ChangeDifficulty(int difficulty)
+        {
+            for (int i = 0; i < cellManager.cells.Length; i++)
+            {
+                if (cellManager.CellWallsCount(cellManager.cells[i]) > difficulty)
+                {
+                    var randomWall = 0;
+                    while (randomWall == 0)
+                    {
+                        var rd = Random.Range(0, 4);
+                        //берем маску с самым правым битом из масок стен и смещаем на случайное число
+                        randomWall = cellManager.cells[i] & (CellManager.maskWallTop << rd);
+                    }
+                    
+                    cellManager.RemoveWall(i, i + cellManager.GetNeighbourRelativePosition(randomWall << 4));
                 }
             }
         }

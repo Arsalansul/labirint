@@ -18,6 +18,8 @@ namespace Assets.Scripts
         public const int maskWallBottom = 1 << 2;
         public const int maskWallLeft = 1 << 3;
 
+        public const int maskAllWalls = (1 << 4) - 1;
+
         public const int maskNeighbourTop = 1 << 4;
         public const int maskNeighbourRight = 1 << 5;
         public const int maskNeighbourBottom = 1 << 6;
@@ -40,10 +42,9 @@ namespace Assets.Scripts
 
         public void DefaultCell()
         {
-            var walls = maskWallTop | maskWallRight | maskWallBottom | maskWallLeft;
             for (var i = 0; i < cells.Length; i++)
             {
-                cells[i] |= walls; //set walls
+                cells[i] |= maskAllWalls; //set walls
 
                 //set unvisited neighbours
                 if (i < cells.Length - labirintSize)
@@ -84,7 +85,7 @@ namespace Assets.Scripts
                 cells[cellIndex - 1] &= ~maskNeighbourRight; //говорим соседу слева, что соседа справа уже посетили
         }
 
-        public int GetNeighbourIndex(int mask)
+        public int GetNeighbourRelativePosition(int mask)
         {
             switch (mask)
             {
@@ -103,6 +104,7 @@ namespace Assets.Scripts
 
         public void RemoveWall(int cellIndex, int neighbourIndex)
         {
+            if (neighbourIndex < 0 || neighbourIndex >= labirintSize * labirintSize) return;
             var indexDif = cellIndex - neighbourIndex;
             if (indexDif == -labirintSize)
             {
@@ -126,22 +128,19 @@ namespace Assets.Scripts
             }
         }
 
-        public int GetRandomUnvisitedNeghbourIndex(int cell)
+        public int GetRandomUnvisitedNeghbourRelativePosition(int cell)
         {
             var neighbourPositionMask = 0; 
-
-            if ((cell & ((1 << 4) - 1)<<4) != 0)
+            if ((cell & maskAllNeighbours) != 0)
             {
                 while (neighbourPositionMask == 0)
                 {
                     var rd = Random.Range(0, 4);
-                    if ((cell & (maskNeighbourTop << rd)) != 0)
-                        neighbourPositionMask = maskNeighbourTop << rd;
+                    //берем маску с самым правым битом из масок соседей и смещаем на случайное число
+                    neighbourPositionMask = cell & (maskNeighbourTop << rd);
                 }
-
-                return GetNeighbourIndex(neighbourPositionMask);
+                return GetNeighbourRelativePosition(neighbourPositionMask);
             }
-            Debug.LogError("dotn't have unvisited neubours. Cell " + cell);
             return 0;
         }
 
@@ -151,6 +150,18 @@ namespace Assets.Scripts
             var y = (int) position.z;
 
             return cells[x + y * labirintSize];
+        }
+
+        public int CellWallsCount(int cell)
+        {
+            var cellWalls = cell & CellManager.maskAllWalls;
+            var result = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                result += (cell & (1 << i)) >> i;
+            }
+
+            return result;
         }
     }
 }

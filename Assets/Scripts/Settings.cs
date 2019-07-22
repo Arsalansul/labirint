@@ -5,6 +5,8 @@ namespace Assets.Scripts
     public class Settings
     {
         public int labirintSize;
+
+        public int labirintDifficulty;
         //[System.Serializable]
         //public class GameSettings
         //{
