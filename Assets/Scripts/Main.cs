@@ -8,10 +8,13 @@ namespace Assets.Scripts
     {
         public Button gameButton;
         public Button quitButton;
-
-        public CellManager cellManager;
-
+        
         private Settings settings;
+
+        private GameObject canvasGameObject;
+
+        private Game game;
+
 
         void Start()
         {
@@ -21,12 +24,8 @@ namespace Assets.Scripts
             settings = new Settings();
             settings.labirintSize = 15;
 
-            cellManager = new CellManager(settings.labirintSize);
-
-            //for (int i = 0; i < cellManager.cells.Length; i++)
-            //{
-            //    Debug.Log("cell " + cellManager.cells[i]);
-            //}
+            canvasGameObject = GameObject.Find("Canvas");
+            
         }
 
         private void Quit()
@@ -36,7 +35,9 @@ namespace Assets.Scripts
 
         private void StartGame()
         {
-            Game game = new Game(cellManager, settings);
+            game = new Game(settings);
+            StartCoroutine(game.LoadingScene());
+            canvasGameObject.SetActive(false);
         }
     }
 }
