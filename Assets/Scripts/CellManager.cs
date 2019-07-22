@@ -1,178 +1,154 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Diagnostics;
+using System.Numerics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
+using Vector3 = UnityEngine.Vector3;
 
-public class CellManager : MonoBehaviour
+namespace Assets.Scripts
 {
-    // для простоты вычислений левый нижний угол лабиринта в точке 0, 0, 0
-    public Cell[,] cells;
-
-    public static CellManager Instance { get; private set; }
-
-    private void Awake()
+    public class CellManager
     {
-        Instance = this;
-    }
+        public int[] cells;
 
-    public void CreateCells()
-    {
-        var labirintSize = Settings.Instance.gameSettings.labirintSize;
-        cells = new Cell[labirintSize, labirintSize];
-        for (int i = 0; i < labirintSize; i++)
+        // 1-4 bits - walls
+        // 5-8 - unvisited neighbours (for CreateLabirint)
+        // 9 - visited  (for CreateLabirint)
+        public const int maskWallTop = 1;
+        public const int maskWallRight = 1 << 1;
+        public const int maskWallBottom = 1 << 2;
+        public const int maskWallLeft = 1 << 3;
+
+        public const int maskNeighbourTop = 1 << 4;
+        public const int maskNeighbourRight = 1 << 5;
+        public const int maskNeighbourBottom = 1 << 6;
+        public const int maskNeighbourLeft = 1 << 7;
+
+        public const int maskVisited = 1 << 8;
+
+        public const int maskAllNeighbours = ((1 << 4) - 1) << 4;
+
+        private readonly int labirintSize;
+
+        public CellManager(int _labirintSize)
         {
-            for (int j = 0; j < labirintSize; j++)
-            {
-                Cell cell = new Cell();
-                cell.x = i;
-                cell.y = j;
-                SetWalls(cell);
-                cells[i, j] = cell;
-            }
-        }
-    }
-
-    public Cell GetCellByTransform(Vector3 vector3)
-    {
-        return cells[(int)vector3.x, (int)vector3.z];
-    }
-
-    public Vector3 GetTransformByCell(Cell cell)
-    {
-        Vector3 vector = new Vector3(cell.x + 0.5f, 0.5f, cell.y + 0.5f);
-
-        return vector;
-    }
-
-    public Cell GetRandomNeighbourCellContainedInList(Cell cell, List<Cell> cellsList)
-    {
-        List<Cell> neighbourds = GetNeighbours(cell);
-        while (neighbourds.Count > 0)
-        {
-            int index = Random.Range(0, neighbourds.Count);
-            if (cellsList.Contains(neighbourds[index]))
-            {
-                return neighbourds[index];
-            }
-            neighbourds.RemoveAt(index);
+            labirintSize = _labirintSize;
+            cells = new int[labirintSize * labirintSize];
+            DefaultCell();
         }
 
-        return null;
-    }
-
-    private List<Cell> GetNeighbours(Cell cell)
-    {
-        var labirintSize = Settings.Instance.gameSettings.labirintSize;
-        List<Cell> result = new List<Cell>();
-        for (int i = -1; i < 2; i += 2)
+        public void DefaultCell()
         {
-            if (cell.x + i >= 0 && cell.x + i < labirintSize)
+            var walls = maskWallTop | maskWallRight | maskWallBottom | maskWallLeft;
+            for (var i = 0; i < cells.Length; i++)
             {
-                result.Add(cells[cell.x + i, cell.y]);
+                cells[i] |= walls; //set walls
+
+                //set unvisited neighbours
+                if (i < cells.Length - labirintSize)
+                {
+                    cells[i] |= maskNeighbourTop;
+                }
+
+                if ((i + 1) % labirintSize != 0)
+                {
+                    cells[i] |= maskNeighbourRight;
+                }
+
+                if (i >= labirintSize)
+                {
+                    cells[i] |= maskNeighbourBottom;
+                }
+
+                if (i % labirintSize != 0)
+                {
+                    cells[i] |= maskNeighbourLeft;
+                }
             }
         }
 
-        for (int i = -1; i < 2; i += 2)
+        public void Visited(int cellIndex)
         {
-            if (cell.y + i >= 0 && cell.y + i < labirintSize)
-            {
-                result.Add(cells[cell.x, cell.y + i]);
-            }
-        }
-        return result;
-    }
+            cells[cellIndex] |= maskVisited;
+            if (cellIndex < cells.Length - labirintSize)
+                cells[cellIndex + labirintSize] &= ~maskNeighbourBottom; //говорим верхнему соседу, что соседа снизу уже посетили
 
-    private void SetWalls(Cell cell)
-    {
-        cell.Walls = new List<Cell.Wall>
-        {
-            Cell.Wall.Top,
-            Cell.Wall.Right,
-            Cell.Wall.Bottom,
-            Cell.Wall.Left
-        };
-    }
+            if((cellIndex +1)%labirintSize !=0)
+                cells[cellIndex + 1] &= ~maskNeighbourLeft; //говорим соседу справа, что соседа слева уже посетили
 
-    public void RemoveWall(Cell cell1, Cell cell2)
-    {
-        if (cell1.x > cell2.x)
-        {
-            cell1.Walls.Remove(Cell.Wall.Left);
-            cell2.Walls.Remove(Cell.Wall.Right);
-        }
-        else if (cell1.x < cell2.x)
-        {
-            cell1.Walls.Remove(Cell.Wall.Right);
-            cell2.Walls.Remove(Cell.Wall.Left);
-        }
-        else if (cell1.y > cell2.y)
-        {
-            cell1.Walls.Remove(Cell.Wall.Bottom);
-            cell2.Walls.Remove(Cell.Wall.Top);
-        }
-        else if (cell1.y < cell2.y)
-        {
-            cell1.Walls.Remove(Cell.Wall.Top);
-            cell2.Walls.Remove(Cell.Wall.Bottom);
-        }
-        else
-        {
-            Debug.Log("equal cells");
-        }
-    }
+            if(cellIndex >= labirintSize)
+                cells[cellIndex - labirintSize] &= ~maskNeighbourTop; //говорим соседу снизу, что соседа сверху уже посетили
 
-    public void RemoveWall(Cell cell, Cell.Wall wall)
-    {
-        var labirintSize = Settings.Instance.gameSettings.labirintSize;
-        switch (wall)
-        {
-            case Cell.Wall.Top:
-                if (cell.y == labirintSize - 1) break;
-                cell.Walls.Remove(wall);
-                cells[cell.x, cell.y + 1].Walls.Remove(Cell.Wall.Bottom);
-                break;
-            case Cell.Wall.Right:
-                if (cell.x == labirintSize - 1) break;
-                cell.Walls.Remove(wall);
-                cells[cell.x+1, cell.y].Walls.Remove(Cell.Wall.Left);
-                break;
-            case Cell.Wall.Bottom:
-                if (cell.y == 0) break;
-                cell.Walls.Remove(wall);
-                cells[cell.x, cell.y - 1].Walls.Remove(Cell.Wall.Top);
-                break;
-            case Cell.Wall.Left:
-                if (cell.x == 0) break;
-                cell.Walls.Remove(wall);
-                cells[cell.x - 1, cell.y].Walls.Remove(Cell.Wall.Right);
-                break;
+            if(cellIndex % labirintSize != 0)
+                cells[cellIndex - 1] &= ~maskNeighbourRight; //говорим соседу слева, что соседа справа уже посетили
         }
-    }
 
-    public List<Cell> GetPassableNeighbours(Cell cell)
-    {
-        var result = GetNeighbours(cell);
-        var labirintSize = Settings.Instance.gameSettings.labirintSize;
-
-        foreach (var wall in cell.Walls)
+        public int GetNeighbourIndex(int mask)
         {
-            if (wall == Cell.Wall.Top && cell.y <labirintSize - 1)
+            switch (mask)
             {
-                result.Remove(cells[cell.x, cell.y + 1]);
-            }
-            else if (wall == Cell.Wall.Right && cell.x < labirintSize - 1)
-            {
-                result.Remove(cells[cell.x +1, cell.y]);
-            }
-            else if (wall == Cell.Wall.Bottom && cell.y > 0)
-            {
-                result.Remove(cells[cell.x, cell.y - 1]);
-            }
-            else if (wall == Cell.Wall.Left && cell.x > 0)
-            {
-                result.Remove(cells[cell.x - 1, cell.y]);
+                case maskNeighbourTop:
+                    return labirintSize;
+                case maskNeighbourRight:
+                    return 1;
+                case maskNeighbourBottom:
+                    return -15;
+                case maskNeighbourLeft:
+                    return -1;
+                default:
+                    return 0;
             }
         }
 
-        return result;
+        public void RemoveWall(int cellIndex, int neighbourIndex)
+        {
+            var indexDif = cellIndex - neighbourIndex;
+            if (indexDif == -labirintSize)
+            {
+                cells[cellIndex] &= ~maskWallTop; //remove top wall
+                cells[neighbourIndex] &= ~maskWallBottom; //remove bottom wall
+            }
+            else if (indexDif == -1)
+            {
+                cells[cellIndex] &= ~maskWallRight; //remove right wall
+                cells[neighbourIndex] &= ~maskWallLeft; //remove left wall
+            }
+            else if (indexDif == labirintSize)
+            {
+                cells[cellIndex] &= ~maskWallBottom; //remove bottom wall
+                cells[neighbourIndex] &= ~maskWallTop; //remove top wall
+            }
+            else if (indexDif == 1)
+            {
+                cells[cellIndex] &= ~maskWallLeft; //remove left wall
+                cells[neighbourIndex] &= ~maskWallRight; //remove right wall
+            }
+        }
+
+        public int GetRandomUnvisitedNeghbourIndex(int cell)
+        {
+            var neighbourPositionMask = 0; 
+
+            if ((cell & ((1 << 4) - 1)<<4) != 0)
+            {
+                while (neighbourPositionMask == 0)
+                {
+                    var rd = Random.Range(0, 4);
+                    if ((cell & (maskNeighbourTop << rd)) != 0)
+                        neighbourPositionMask = maskNeighbourTop << rd;
+                }
+
+                return GetNeighbourIndex(neighbourPositionMask);
+            }
+            Debug.LogError("dotn't have unvisited neubours. Cell " + cell);
+            return 0;
+        }
+
+        public int GetCellByPosition(Vector3 position)
+        {
+            var x = (int) position.x;
+            var y = (int) position.z;
+
+            return cells[x + y * labirintSize];
+        }
     }
 }

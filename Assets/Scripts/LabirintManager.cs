@@ -1,104 +1,45 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class LabirintManager : MonoBehaviour
+namespace Assets.Scripts
 {
-    private CellManager cellManager = CellManager.Instance;
-
-    // для простоты вычислений левый нижний угол лабиринта в точке 0, 0, 0
-    private void CreateWalls()
+    public class LabirintManager
     {
-        var labirintSize = Settings.Instance.gameSettings.labirintSize;
-        GameObject walls = new GameObject("Walls");
-        Vector3 position = new Vector3(0.5f, 0, 0);
-        Vector3 rotation = new Vector3(0, 0, 0);
-        Vector3 deltaInRow = new Vector3(1, 0, 0);
-        Vector3 deltaInColumn = new Vector3(-labirintSize, 0, 1);
-        var cellDeltaPosition = new Vector3(0, 0, 0.5f);
+        private readonly CellManager cellManager;
 
-        var wall = Cell.Wall.Bottom;
-        for (int v = 0; v < 2; v++)
+        public LabirintManager(CellManager _cellManager)
         {
-            for (int i = 0; i < labirintSize + 1; i++)
+            cellManager = _cellManager;
+        }
+
+        public void CreateLabirint()
+        {
+            var cells = cellManager.cells;
+            cellManager.Visited(0);
+
+            var unvisitedCellsCount = cells.Length - 1;
+
+            var currentCellIndex = 0;
+
+            Stack<int> path = new Stack<int>();
+            while (unvisitedCellsCount > 0)
             {
-                for (int j = 0; j < labirintSize; j++)
+                if ((cells[currentCellIndex] & CellManager.maskAllNeighbours) != 0)
                 {
-                    if (i == 0 || i == labirintSize)
-                        Instantiate(Settings.Instance.wallSettings.WallGameObject, position, Quaternion.Euler(rotation), walls.transform);
-                    else if (cellManager.GetCellByTransform(position + cellDeltaPosition).Walls.Contains(wall))
-                    {
-                        Instantiate(Settings.Instance.wallSettings.WallGameObject, position, Quaternion.Euler(rotation), walls.transform);
-                    }
-                    position += deltaInRow;
+                    path.Push(currentCellIndex);
+                    int randomUnvisitedNeghbourIndex = currentCellIndex + cellManager.GetRandomUnvisitedNeghbourIndex(cells[currentCellIndex]);
+                    cellManager.RemoveWall(currentCellIndex, randomUnvisitedNeghbourIndex);
+                    currentCellIndex = randomUnvisitedNeghbourIndex;
+                    cellManager.Visited(currentCellIndex);
+                    unvisitedCellsCount--;
                 }
-                position += deltaInColumn;
-            }
-
-            position = new Vector3(0, 0, 0.5f);
-            rotation = new Vector3(0, 90, 0);
-            deltaInRow = new Vector3(0, 0, 1);
-            deltaInColumn = new Vector3(1, 0, -labirintSize);
-            wall = Cell.Wall.Left;
-            cellDeltaPosition = new Vector3(0.5f, 0, 0);
-        }
-    }
-
-
-    private void CreateLabirint()
-    {
-        var labirintSize = Settings.Instance.gameSettings.labirintSize;
-        List<Cell> unvisitedCells = new List<Cell>();
-        for (int i = 0; i < labirintSize; i++)
-        {
-            for (int j = 0; j < labirintSize; j++)
-            {
-                unvisitedCells.Add(cellManager.cells[i, j]);
+                else //if (path.Count > 0)
+                {
+                    currentCellIndex = path.Pop();
+                }
             }
         }
 
-        Cell currentCell = cellManager.cells[Random.Range(0, labirintSize), Random.Range(0, labirintSize)];
-        unvisitedCells.Remove(currentCell);
-
-        Stack<Cell> path = new Stack<Cell>();
-        while (unvisitedCells.Count > 0)
-        {
-            var randomUnvisitedNeighbour = cellManager.GetRandomNeighbourCellContainedInList(currentCell, unvisitedCells);
-            if (randomUnvisitedNeighbour != null)
-            {
-                path.Push(currentCell);
-                currentCell.CellCanMoveTo.Add(randomUnvisitedNeighbour);
-                cellManager.RemoveWall(currentCell, randomUnvisitedNeighbour);
-                currentCell = randomUnvisitedNeighbour;
-                unvisitedCells.Remove(currentCell);
-            }
-            else if (path.Count > 0)
-            {
-                currentCell = path.Pop();
-            }
-            else
-            {
-                currentCell = unvisitedCells[Random.Range(0, unvisitedCells.Count)];
-                unvisitedCells.Remove(currentCell);
-            }
-        }
-    }
-
-    private void Difficulty(int difficulty)
-    {
-        foreach (var cell in cellManager.cells)
-        {
-            if (cell.Walls.Count > difficulty)
-                cellManager.RemoveWall(cell, cell.Walls[Random.Range(0, cell.Walls.Count)]);
-        }
-    }
-
-    public void GenerateLab()
-    {
-        var labirintSize = Settings.Instance.gameSettings.labirintSize;
-        Destroy(GameObject.Find("Walls"));
-        cellManager.CreateCells();
-        CreateLabirint();
-        Difficulty(Settings.Instance.gameSettings.labirintDifficulty);
-        CreateWalls();
     }
 }

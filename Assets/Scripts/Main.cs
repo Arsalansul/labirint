@@ -1,28 +1,42 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Main : MonoBehaviour
+namespace Assets.Scripts
 {
-    public Button gameButton;
-    public Button quitButton;
-    
-    // Start is called before the first frame update
-    void Start()
+    public class Main : MonoBehaviour
     {
-        gameButton.onClick.AddListener(StartGame);
-        quitButton.onClick.AddListener(Quit);
-    }
+        public Button gameButton;
+        public Button quitButton;
 
-    private void Quit()
-    {
-        Application.Quit();
-    }
+        public CellManager cellManager;
 
-    private void StartGame()
-    {
-        SceneManager.LoadScene("Game");
+        private Settings settings;
+
+        void Start()
+        {
+            gameButton.onClick.AddListener(StartGame);
+            quitButton.onClick.AddListener(Quit);
+
+            settings = new Settings();
+            settings.labirintSize = 15;
+
+            cellManager = new CellManager(settings.labirintSize);
+
+            //for (int i = 0; i < cellManager.cells.Length; i++)
+            //{
+            //    Debug.Log("cell " + cellManager.cells[i]);
+            //}
+        }
+
+        private void Quit()
+        {
+            Application.Quit();
+        }
+
+        private void StartGame()
+        {
+            Game game = new Game(cellManager, settings);
+        }
     }
 }

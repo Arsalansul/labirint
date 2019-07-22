@@ -422,7 +422,6 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
-  - component: {fileID: 519420030}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -438,21 +437,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
---- !u!114 &519420030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b728ac567bc32704b9f77f0b23d6d89c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  offset: {x: 0, y: 5, z: 0}
-  smoothSpeed: 0.05
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -619,8 +603,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1364132118}
   - component: {fileID: 1364132119}
-  - component: {fileID: 1364132120}
-  - component: {fileID: 1364132121}
   m_Layer: 0
   m_Name: Scripts
   m_TagString: Untagged
@@ -651,51 +633,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1364132117}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb03d0de8e02a73418225e7527ce0a99, type: 3}
+  m_Script: {fileID: 11500000, guid: a8b2fe9dfd4152043b633793a792ea31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameSettings:
-    labirintSize: 15
-    labirintDifficulty: 1
-  wallSettings:
-    WallGameObject: {fileID: 5722349213252135693, guid: bd9559a54215b4645bc361b98a37bad3,
-      type: 3}
-  playerSettings:
-    PlayerGameObject: {fileID: 8585730888453030915, guid: 4d9021bb3d37371458a1a13f8adee433,
-      type: 3}
-    speed: 10
-  enemySettings:
-    EnemyrGameObject: {fileID: 5816898119429619213, guid: 0f0ee74bbe0206849bb3e25c9d3088bc,
-      type: 3}
-    speed: 9
-  coinSettings:
-    CoinGameObject: {fileID: 2814875195187517914, guid: 594c25eff6e824d4fa70855b58b7a1e7,
-      type: 3}
---- !u!114 &1364132120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1364132117}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24699432c82e2fc4d9502a2769620fd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  generateLab: {fileID: 126197615}
---- !u!114 &1364132121
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1364132117}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d195d8b307c2cff4c94bd7a98fc234a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  WallGameObject: {fileID: 5722349213252135693, guid: bd9559a54215b4645bc361b98a37bad3,
+    type: 3}
 --- !u!1 &1393045406
 GameObject:
   m_ObjectHideFlags: 0

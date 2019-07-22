@@ -1,52 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Settings : MonoBehaviour
+namespace Assets.Scripts
 {
-    [System.Serializable]
-    public class GameSettings
+    public class Settings
     {
         public int labirintSize;
-        [Range(0, 3)] public int labirintDifficulty;
-    }
+        //[System.Serializable]
+        //public class GameSettings
+        //{
+        //    public int labirintSize;
+        //    //[Range(0, 3)] public int labirintDifficulty;
+        //}
 
-    [System.Serializable]
-    public class WallSettings
-    {
-        public GameObject WallGameObject;
-    }
-
-    [System.Serializable]
-    public class PlayerSettings
-    {
-        public GameObject PlayerGameObject;
-        public float speed;
-    }
-
-    [System.Serializable]
-    public class EnemySettings
-    {
-        public GameObject EnemyrGameObject;
-        public float speed;
-    }
-
-    [System.Serializable]
-    public class CoinSettings
-    {
-        public GameObject CoinGameObject;
-    }
-
-    public static Settings Instance { get; private set; }
-
-    public GameSettings gameSettings;
-    public WallSettings wallSettings;
-    public PlayerSettings playerSettings;
-    public EnemySettings enemySettings;
-    public CoinSettings coinSettings;
-
-    private void Awake()
-    {
-        Instance = this;
+        //public GameSettings gameSettings;
     }
 }
