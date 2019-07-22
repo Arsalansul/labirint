@@ -25,6 +25,8 @@ namespace Assets.Scripts
 
         public const int maskVisited = 1 << 8;
 
+        public const int maskCameFromLC = ((1 << 8) - 1) << 9; //for labirint creator
+
         public const int maskAllNeighbours = ((1 << 4) - 1) << 4;
 
         private readonly int labirintSize;

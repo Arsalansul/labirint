@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Assets.Scripts
+﻿namespace Assets.Scripts
 {
     public class LabirintManager
     {
@@ -22,21 +18,23 @@ namespace Assets.Scripts
 
             var currentCellIndex = 0;
 
-            Stack<int> path = new Stack<int>();
             while (unvisitedCellsCount > 0)
             {
                 if ((cells[currentCellIndex] & CellManager.maskAllNeighbours) != 0)
                 {
-                    path.Push(currentCellIndex);
                     int randomUnvisitedNeghbourIndex = currentCellIndex + cellManager.GetRandomUnvisitedNeghbourIndex(cells[currentCellIndex]);
                     cellManager.RemoveWall(currentCellIndex, randomUnvisitedNeghbourIndex);
+
+                    cells[randomUnvisitedNeghbourIndex] &= ~CellManager.maskCameFromLC;
+                    cells[randomUnvisitedNeghbourIndex] |= (currentCellIndex << 9); //TODO
+
                     currentCellIndex = randomUnvisitedNeghbourIndex;
                     cellManager.Visited(currentCellIndex);
                     unvisitedCellsCount--;
                 }
                 else //if (path.Count > 0)
                 {
-                    currentCellIndex = path.Pop();
+                    currentCellIndex = (cells[currentCellIndex] & CellManager.maskCameFromLC) >> 9; //TODO
                 }
             }
         }
