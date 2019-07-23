@@ -28,7 +28,7 @@ namespace Assets.Scripts
                     cellManager.RemoveWall(currentCellIndex, randomUnvisitedNeghbourIndex);
 
                     cells[randomUnvisitedNeghbourIndex] &= ~CellManager.maskCameFromLC;
-                    cells[randomUnvisitedNeghbourIndex] |= (currentCellIndex << 9); //TODO
+                    cells[randomUnvisitedNeghbourIndex] |= currentCellIndex << 9; //TODO
 
                     currentCellIndex = randomUnvisitedNeghbourIndex;
                     cellManager.Visited(currentCellIndex);
@@ -36,7 +36,7 @@ namespace Assets.Scripts
                 }
                 else //if (path.Count > 0)
                 {
-                    currentCellIndex = (cells[currentCellIndex] & CellManager.maskCameFromLC) >> 9; //TODO
+                    currentCellIndex = (int)(cells[currentCellIndex] & CellManager.maskCameFromLC) >> 9; //TODO
                 }
             }
 
@@ -54,7 +54,7 @@ namespace Assets.Scripts
                     {
                         var rd = Random.Range(0, 4);
                         //берем маску с самым правым битом из масок стен и смещаем на случайное число
-                        randomWall = cellManager.cells[i] & (CellManager.maskWallTop << rd);
+                        randomWall = (int)(cellManager.cells[i] & (CellManager.maskWallTop << rd));
                     }
                     
                     cellManager.RemoveWall(i, i + cellManager.GetNeighbourRelativePosition(randomWall << 4));

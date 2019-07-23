@@ -8,35 +8,39 @@ namespace Assets.Scripts
 {
     public class CellManager
     {
-        public int[] cells;
+        public long[] cells;
 
         // 1-4 bits - walls
         // 5-8 - unvisited neighbours (for CreateLabirint)
         // 9 - visited  (for CreateLabirint)
-        public const int maskWallTop = 1;
-        public const int maskWallRight = 1 << 1;
-        public const int maskWallBottom = 1 << 2;
-        public const int maskWallLeft = 1 << 3;
-
-        public const int maskAllWalls = (1 << 4) - 1;
-
-        public const int maskNeighbourTop = 1 << 4;
-        public const int maskNeighbourRight = 1 << 5;
-        public const int maskNeighbourBottom = 1 << 6;
-        public const int maskNeighbourLeft = 1 << 7;
-
-        public const int maskVisited = 1 << 8;
-
-        public const int maskCameFromLC = ((1 << 8) - 1) << 9; //for labirint creator
-
-        public const int maskAllNeighbours = ((1 << 4) - 1) << 4;
+        // 10-17 - came from cell index (for CreateLabirint)
+        // 18-25 - came from cell index (for PathFinder)
+        public const long maskWallTop = 1;
+        public const long maskWallRight = 1 << 1;
+        public const long maskWallBottom = 1 << 2;
+        public const long maskWallLeft = 1 << 3;
+                     
+        public const long maskAllWalls = (1 << 4) - 1;
+                     
+        public const long maskNeighbourTop = 1 << 4;
+        public const long maskNeighbourRight = 1 << 5;
+        public const long maskNeighbourBottom = 1 << 6;
+        public const long maskNeighbourLeft = 1 << 7;
+                     
+        public const long maskVisited = 1 << 8;
+                    
+        public const long maskCameFromLC = ((1 << 8) - 1) << 9; //for labirint creator
+                   
+        public const long maskCameFromPF = ((1 << 8) - 1) << 17; //for labirint creator
+              
+        public const long maskAllNeighbours = ((1 << 4) - 1) << 4;
 
         private readonly int labirintSize;
 
         public CellManager(int _labirintSize)
         {
             labirintSize = _labirintSize;
-            cells = new int[labirintSize * labirintSize];
+            cells = new long[labirintSize * labirintSize];
             DefaultCell();
         }
 
@@ -85,7 +89,7 @@ namespace Assets.Scripts
                 cells[cellIndex - 1] &= ~maskNeighbourRight; //говорим соседу слева, что соседа справа уже посетили
         }
 
-        public int GetNeighbourRelativePosition(int mask)
+        public int GetNeighbourRelativePosition(long mask)
         {
             switch (mask)
             {
@@ -128,9 +132,9 @@ namespace Assets.Scripts
             }
         }
 
-        public int GetRandomUnvisitedNeghbourRelativePosition(int cell)
+        public int GetRandomUnvisitedNeghbourRelativePosition(long cell)
         {
-            var neighbourPositionMask = 0; 
+            long neighbourPositionMask = 0; 
             if ((cell & maskAllNeighbours) != 0)
             {
                 while (neighbourPositionMask == 0)
@@ -144,7 +148,7 @@ namespace Assets.Scripts
             return 0;
         }
 
-        public int GetCellByPosition(Vector3 position)
+        public long GetCellByPosition(Vector3 position)
         {
             var x = (int) position.x;
             var y = (int) position.z;
@@ -152,14 +156,22 @@ namespace Assets.Scripts
             return cells[x + y * labirintSize];
         }
 
-        public int CellWallsCount(int cell)
+        public int CellWallsCount(long cell)
         {
             var result = 0;
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
             {
-                result += (cell & (1 << i)) >> i;
+                result += ((int)cell & (1 << i)) >> i;
             }
 
+            return result;
+        }
+
+        public int Distance(int cellIndex_1, int cellIndex_2) //минимальное расстояние без диагоналей
+        {
+            var result = 0;
+            result += Mathf.Abs(cellIndex_1 % labirintSize - cellIndex_2 % labirintSize);
+            result += Mathf.Abs(cellIndex_1 / labirintSize - cellIndex_2 / labirintSize);
             return result;
         }
     }
