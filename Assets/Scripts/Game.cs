@@ -11,20 +11,25 @@ namespace Assets.Scripts
         private Settings settings;
 
         private WallsCreator wallsCreator;
+        private UnitManager unitManager;
 
         public Game(Settings _settings)
         {
             settings = _settings;
             cellManager = new CellManager(settings.labirintSize);
             labirintManager = new LabirintManager(cellManager);
+            wallsCreator = new WallsCreator();
+            unitManager = new UnitManager();
         }
 
         private void LoadSceneObjects()
         {
-            wallsCreator = new WallsCreator();
             wallsCreator.WallGameObject = Resources.Load<GameObject>("Prefabs/Wall");
+
             labirintManager.CreateLabirint(settings);
             wallsCreator.CreateWalls(cellManager, settings);
+            
+            unitManager.InstantiateUnits(settings);
         }
 
         public IEnumerator LoadingScene()
