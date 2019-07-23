@@ -5,6 +5,9 @@ namespace Assets.Scripts
     public class Unit :MonoBehaviour
     {
         public int moveController; //0 - none, 1- player, 2 - AI
+        public CellManager cellManager;
+
+        private PathFinder pathFinder;
 
         public Vector2 Pos
         {
@@ -20,15 +23,27 @@ namespace Assets.Scripts
             }
         }
 
+        void Start()
+        {
+            pathFinder = new PathFinder(cellManager);
+            Debug.Log(pathFinder.GiveCellIndexToMove(cellManager.GetCellIndexByPosition(transform.position), 1));
+            //var moveToIndex = (cellManager.GetCellByPosition(transform.position) & CellManager.maskMoveToPF) >> 25;
+            //Debug.Log(transform.position + " " + moveToIndex);
+        }
+
         void Update()
         {
-            Move();
+            //Move();
         }
 
         private void Move()
         {
             if (moveController == 2)
-                transform.position = Vector3.MoveTowards(transform.position, Vector3.forward, Time.deltaTime);
+            {
+                //pathFinder.GetPath(cellManager.GetCellIndexByPosition(transform.position), cellManager.GetCellIndexByPosition(Vector3.zero));
+                //var moveToIndex = (cellManager.GetCellByPosition(transform.position) & CellManager.maskMoveToPF) >> 25;
+                //transform.position = Vector3.MoveTowards(transform.position, cellManager.GetPositionByCellIndex((int)moveToIndex), Time.deltaTime);
+            }
         }
     }
 }

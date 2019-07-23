@@ -8,39 +8,59 @@ namespace Assets.Scripts
 {
     public class CellManager
     {
-        public long[] cells;
+        public ulong[] cells;
 
         // 1-4 bits - walls
         // 5-8 - unvisited neighbours (for CreateLabirint)
         // 9 - visited  (for CreateLabirint)
         // 10-17 - came from cell index (for CreateLabirint)
-        // 18-25 - came from cell index (for PathFinder)
-        public const long maskWallTop = 1;
-        public const long maskWallRight = 1 << 1;
-        public const long maskWallBottom = 1 << 2;
-        public const long maskWallLeft = 1 << 3;
+
+        // 18 - 25 - came from cell index (for PathFinder)
+        // 26 - in open list (A Star терминология) (for PathFinder)
+        // 27 - in close list (A Star терминология) (for PathFinder)
+        // 28 - 35 - g value (A Star терминология) (for PathFinder)
+        // 36 - 43 - h value (A Star терминология) (for PathFinder)
+        // 44 - 51 - move to cell index (for PathFinder)
+
+        public const ulong maskWallTop = 1;
+        public const ulong maskWallRight = 1 << 1;
+        public const ulong maskWallBottom = 1 << 2;
+        public const ulong maskWallLeft = 1 << 3;
                      
-        public const long maskAllWalls = (1 << 4) - 1;
+        public const ulong maskAllWalls = (1 << 4) - 1;
                      
-        public const long maskNeighbourTop = 1 << 4;
-        public const long maskNeighbourRight = 1 << 5;
-        public const long maskNeighbourBottom = 1 << 6;
-        public const long maskNeighbourLeft = 1 << 7;
-                     
-        public const long maskVisited = 1 << 8;
+        public const ulong maskNeighbourTop = 1 << 4;
+        public const ulong maskNeighbourRight = 1 << 5;
+        public const ulong maskNeighbourBottom = 1 << 6;
+        public const ulong maskNeighbourLeft = 1 << 7;
+
+        public const ulong maskAllNeighbours = ((1 << 4) - 1) << 4;
+
+        public const ulong maskVisited = 1 << 8;
                     
-        public const long maskCameFromLC = ((1 << 8) - 1) << 9; //for labirint creator
-                   
-        public const long maskCameFromPF = ((1 << 8) - 1) << 17; //for labirint creator
-              
-        public const long maskAllNeighbours = ((1 << 4) - 1) << 4;
+        public const ulong maskCameFromLC = ((1 << 8) - 1) << 9; //for labirint creator
+        public const int GetCameFromLC = 9; //for labirint creator
+
+        public const ulong maskCameFromPF = ((1 << 8) - 1) << 17; //for path finder
+        public const int CameFromFirstBitPF = 17; //for path finder
+        public const ulong maskOpenListPF = 1 << 25; //for path finder
+        public const int OpenListFirstBitPF = 25; //for path finder
+        public const ulong maskCloseListPF = 1 << 26; //for path finder
+        public const ulong maskGPF = ((ulong)(1 << 8) - 1) << 27; //for path finder
+        public const int GFirstBitPF = 27; //for path finder
+        public const ulong maskHPF = ((ulong)(1 << 8) - 1) << 35; //for path finder
+        public const int HFirstBitPF = 35; //for path finder
+        public const ulong maskMoveTo = ((ulong)(1 << 8) - 1) << 43; //for path finder
+        public const int MoveToIndexFirstBitPF = 43; //for path finder
+        public const ulong maskAllPF = (((ulong)1 << 34) - 1) << 17; //for path finder
+
 
         private readonly int labirintSize;
 
         public CellManager(int _labirintSize)
         {
             labirintSize = _labirintSize;
-            cells = new long[labirintSize * labirintSize];
+            cells = new ulong[labirintSize * labirintSize];
             DefaultCell();
         }
 
@@ -89,7 +109,7 @@ namespace Assets.Scripts
                 cells[cellIndex - 1] &= ~maskNeighbourRight; //говорим соседу слева, что соседа справа уже посетили
         }
 
-        public int GetNeighbourRelativePosition(long mask)
+        public int GetNeighbourRelativePosition(ulong mask)
         {
             switch (mask)
             {
@@ -98,7 +118,7 @@ namespace Assets.Scripts
                 case maskNeighbourRight:
                     return 1;
                 case maskNeighbourBottom:
-                    return -15;
+                    return -labirintSize;
                 case maskNeighbourLeft:
                     return -1;
                 default:
@@ -132,9 +152,9 @@ namespace Assets.Scripts
             }
         }
 
-        public int GetRandomUnvisitedNeghbourRelativePosition(long cell)
+        public int GetRandomUnvisitedNeghbourRelativePosition(ulong cell)
         {
-            long neighbourPositionMask = 0; 
+            ulong neighbourPositionMask = 0; 
             if ((cell & maskAllNeighbours) != 0)
             {
                 while (neighbourPositionMask == 0)
@@ -148,7 +168,7 @@ namespace Assets.Scripts
             return 0;
         }
 
-        public long GetCellByPosition(Vector3 position)
+        public ulong GetCellByPosition(Vector3 position)
         {
             var x = (int) position.x;
             var y = (int) position.z;
@@ -156,7 +176,24 @@ namespace Assets.Scripts
             return cells[x + y * labirintSize];
         }
 
-        public int CellWallsCount(long cell)
+        public int GetCellIndexByPosition(Vector3 position)
+        {
+            var x = (int)position.x;
+            var y = (int)position.z;
+
+            return x + y * labirintSize;
+        }
+
+        public Vector3 GetPositionByCellIndex(int cellIndex)
+        {
+            var x = cellIndex % labirintSize;
+            var y = 0;
+            var z = cellIndex / labirintSize;
+
+            return new Vector3(x, y, z);
+        }
+
+        public int CellWallsCount(ulong cell)
         {
             var result = 0;
             for (var i = 0; i < 4; i++)

@@ -25,11 +25,11 @@ namespace Assets.Scripts
         private void LoadSceneObjects()
         {
             wallsCreator.WallGameObject = Resources.Load<GameObject>("Prefabs/Wall");
-
+            
             labirintManager.CreateLabirint(settings);
             wallsCreator.CreateWalls(cellManager, settings);
             
-            unitManager.InstantiateUnits(settings);
+            unitManager.InstantiateUnits(settings, cellManager);
         }
 
         public IEnumerator LoadingScene()

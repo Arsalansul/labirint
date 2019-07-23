@@ -28,7 +28,7 @@ namespace Assets.Scripts
                     cellManager.RemoveWall(currentCellIndex, randomUnvisitedNeghbourIndex);
 
                     cells[randomUnvisitedNeghbourIndex] &= ~CellManager.maskCameFromLC;
-                    cells[randomUnvisitedNeghbourIndex] |= currentCellIndex << 9; //TODO
+                    cells[randomUnvisitedNeghbourIndex] |= (ulong)currentCellIndex << CellManager.GetCameFromLC;
 
                     currentCellIndex = randomUnvisitedNeghbourIndex;
                     cellManager.Visited(currentCellIndex);
@@ -36,7 +36,7 @@ namespace Assets.Scripts
                 }
                 else //if (path.Count > 0)
                 {
-                    currentCellIndex = (int)(cells[currentCellIndex] & CellManager.maskCameFromLC) >> 9; //TODO
+                    currentCellIndex = (int)(cells[currentCellIndex] & CellManager.maskCameFromLC) >> CellManager.GetCameFromLC;
                 }
             }
 
@@ -45,16 +45,16 @@ namespace Assets.Scripts
 
         private void ChangeDifficulty(int difficulty)
         {
-            for (int i = 0; i < cellManager.cells.Length; i++)
+            for (var i = 0; i < cellManager.cells.Length; i++)
             {
                 if (cellManager.CellWallsCount(cellManager.cells[i]) > difficulty)
                 {
-                    var randomWall = 0;
+                    uint randomWall = 0;
                     while (randomWall == 0)
                     {
                         var rd = Random.Range(0, 4);
                         //берем маску с самым правым битом из масок стен и смещаем на случайное число
-                        randomWall = (int)(cellManager.cells[i] & (CellManager.maskWallTop << rd));
+                        randomWall = (uint)(cellManager.cells[i] & (CellManager.maskWallTop << rd));
                     }
                     
                     cellManager.RemoveWall(i, i + cellManager.GetNeighbourRelativePosition(randomWall << 4));
