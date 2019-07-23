@@ -22,8 +22,8 @@ namespace Assets.Scripts
             quitButton.onClick.AddListener(Quit);
 
             settings = new Settings();
-            settings.labirintSize = 15;
-            settings.labirintDifficulty = 2;
+            settings.labirintSize = 15; //labirintSize*labirintSize ограничено 8 битами
+            settings.labirintDifficulty = 2; //от 0 до 3
 
             canvasGameObject = GameObject.Find("Canvas");
             
