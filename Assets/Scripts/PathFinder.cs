@@ -16,6 +16,7 @@ namespace Assets.Scripts
             cellManager = _cellManager;
         }
 
+        private bool pathFound;
         private void FindPath(int currentCellIndex, int endCellIndex)
         {
             cellManager.cells[currentCellIndex] |= CellManager.maskOpenListPF; //add current cell to open list
@@ -30,6 +31,7 @@ namespace Assets.Scripts
 
                 if (currentCellIndex == endCellIndex) //found the end
                 {
+                    pathFound = true;
                     break;
                 }
 
@@ -65,6 +67,8 @@ namespace Assets.Scripts
 
                     // Add the child to the openList
                     cellManager.cells[childIndex] |= CellManager.maskOpenListPF;
+
+                    pathFound = false;
                 }
 
                 if (loop > 300)
@@ -77,6 +81,7 @@ namespace Assets.Scripts
 
         public int GiveCellIndexToMove(int startCellIndex, int endCellIndex)
         {
+            ClearCells();
             FindPath(startCellIndex, endCellIndex);
 
             //проходим путь от конца к началу
@@ -85,18 +90,18 @@ namespace Assets.Scripts
             while (currentCellIndex != startCellIndex)
             {
                 loop++;
-                var previusIndex = (uint)((cellManager.cells[currentCellIndex] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF);
-                cellManager.cells[previusIndex] |= (ulong)currentCellIndex << CellManager.MoveToIndexFirstBitPF; //записываем путь
+                var nextIndex = (int)((cellManager.cells[currentCellIndex] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF);
+                cellManager.cells[nextIndex] |= (ulong)currentCellIndex << CellManager.MoveToIndexFirstBitPF; //записываем путь
                 
                 if (loop > 1000)
                 {
-                    Debug.Log("previusIndex " + previusIndex + " currentCellIndex " + currentCellIndex);
+                    Debug.Log("nextIndex " + nextIndex + " currentCellIndex " + currentCellIndex + " pathFound " + pathFound);
                     Debug.LogError("start not reached");
 
                     ClearCells();
                     return startCellIndex;
                 }
-                currentCellIndex = (int) previusIndex;
+                currentCellIndex = nextIndex;
             }
 
             var result = (int) ((cellManager.cells[startCellIndex] & CellManager.maskMoveTo) >> CellManager.MoveToIndexFirstBitPF);
@@ -108,6 +113,7 @@ namespace Assets.Scripts
 
         private void ClearCells()
         {
+            pathFound = false;
             for (var i = 0; i < cellManager.cells.Length; i++)
             {
                 cellManager.cells[i] &= ~CellManager.maskAllPF;
