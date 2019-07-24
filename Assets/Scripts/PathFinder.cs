@@ -10,7 +10,7 @@ namespace Assets.Scripts
     // https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
     public class PathFinder
     {
-        private CellManager cellManager;
+        private readonly CellManager cellManager;
         public PathFinder(CellManager _cellManager)
         {
             cellManager = _cellManager;
@@ -19,8 +19,10 @@ namespace Assets.Scripts
         private void FindPath(int currentCellIndex, int endCellIndex)
         {
             cellManager.cells[currentCellIndex] |= CellManager.maskOpenListPF; //add current cell to open list
+            var loop = 0;
             while (OpenListCount() > 0)
             {
+                loop++;
                 currentCellIndex = GetCellIndexWithLeastF(); // let the currentNode equal the node with the least f value
 
                 cellManager.cells[currentCellIndex] &= ~CellManager.maskOpenListPF; //remove from open list
@@ -64,6 +66,12 @@ namespace Assets.Scripts
                     // Add the child to the openList
                     cellManager.cells[childIndex] |= CellManager.maskOpenListPF;
                 }
+
+                if (loop > 300)
+                {
+                    Debug.LogError("path not found");
+                    break;
+                }
             }
         }
 
@@ -73,16 +81,25 @@ namespace Assets.Scripts
 
             //проходим путь от конца к началу
             var currentCellIndex = endCellIndex;
+            var loop = 0;
             while (currentCellIndex != startCellIndex)
             {
-                var previusIndex = (int)((cellManager.cells[currentCellIndex] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF);
+                loop++;
+                var previusIndex = (uint)((cellManager.cells[currentCellIndex] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF);
                 cellManager.cells[previusIndex] |= (ulong)currentCellIndex << CellManager.MoveToIndexFirstBitPF; //записываем путь
+                
+                if (loop > 1000)
+                {
+                    Debug.Log("previusIndex " + previusIndex + " currentCellIndex " + currentCellIndex);
+                    Debug.LogError("start not reached");
 
-                currentCellIndex = previusIndex;
+                    ClearCells();
+                    return startCellIndex;
+                }
+                currentCellIndex = (int) previusIndex;
             }
 
-            var result = (int) ((cellManager.cells[startCellIndex] & CellManager.maskMoveTo) >>
-                                CellManager.MoveToIndexFirstBitPF);
+            var result = (int) ((cellManager.cells[startCellIndex] & CellManager.maskMoveTo) >> CellManager.MoveToIndexFirstBitPF);
 
             ClearCells();
 
@@ -91,7 +108,7 @@ namespace Assets.Scripts
 
         private void ClearCells()
         {
-            for (int i = 0; i < cellManager.cells.Length; i++)
+            for (var i = 0; i < cellManager.cells.Length; i++)
             {
                 cellManager.cells[i] &= ~CellManager.maskAllPF;
             }
@@ -100,7 +117,7 @@ namespace Assets.Scripts
         private int OpenListCount()
         {
             var result = 0;
-            for (int i = 0; i < cellManager.cells.Length; i++)
+            for (var i = 0; i < cellManager.cells.Length; i++)
             {
                 result += (int)((cellManager.cells[i] & CellManager.maskOpenListPF) >> CellManager.OpenListFirstBitPF);
             }
@@ -110,16 +127,18 @@ namespace Assets.Scripts
         private int GetCellIndexWithLeastF()
         {
             var result = -1;
-            ulong f_Old = 300;
+            uint f_Old = 300;
             for (var i = 0; i < cellManager.cells.Length; i++)
             {
                 if ((cellManager.cells[i] & CellManager.maskOpenListPF) == 0) continue;
-                var f = ((cellManager.cells[i] & CellManager.maskGPF) >> CellManager.GFirstBitPF) + ((cellManager.cells[i] & CellManager.maskHPF) >> CellManager.HFirstBitPF);
+                var f =(uint) (((cellManager.cells[i] & CellManager.maskGPF) >> CellManager.GFirstBitPF) + ((cellManager.cells[i] & CellManager.maskHPF) >> CellManager.HFirstBitPF));
 
                 if (f >= f_Old) continue;
                 result = i;
                 f_Old = f;
             }
+            if (result == -1)
+                Debug.LogError("f_Old " + f_Old);
             return result;
         }
     }

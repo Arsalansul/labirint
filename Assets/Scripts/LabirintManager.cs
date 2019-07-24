@@ -2,6 +2,7 @@
 
 namespace Assets.Scripts
 {
+    //https://habr.com/ru/post/262345/
     public class LabirintManager
     {
         private readonly CellManager cellManager;

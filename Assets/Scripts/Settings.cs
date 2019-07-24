@@ -9,7 +9,7 @@ namespace Assets.Scripts
         public int labirintDifficulty;
 
         public Vector2 playerStartPosition;
-        public int enemyCount = 0;
-        public int coinCount = 0;
+        public int enemyCount = 35;
+        public int coinCount = 2;
     }
 }

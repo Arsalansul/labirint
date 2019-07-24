@@ -23,34 +23,34 @@ namespace Assets.Scripts
         // 44 - 51 - move to cell index (for PathFinder)
 
         public const ulong maskWallTop = 1;
-        public const ulong maskWallRight = 1 << 1;
-        public const ulong maskWallBottom = 1 << 2;
-        public const ulong maskWallLeft = 1 << 3;
+        public const ulong maskWallRight = (ulong)1 << 1;
+        public const ulong maskWallBottom = (ulong)1 << 2;
+        public const ulong maskWallLeft = (ulong)1 << 3;
                      
-        public const ulong maskAllWalls = (1 << 4) - 1;
+        public const ulong maskAllWalls = ((ulong)1 << 4) - 1;
                      
-        public const ulong maskNeighbourTop = 1 << 4;
-        public const ulong maskNeighbourRight = 1 << 5;
-        public const ulong maskNeighbourBottom = 1 << 6;
-        public const ulong maskNeighbourLeft = 1 << 7;
+        public const ulong maskNeighbourTop = (ulong)1 << 4;
+        public const ulong maskNeighbourRight = (ulong)1 << 5;
+        public const ulong maskNeighbourBottom = (ulong)1 << 6;
+        public const ulong maskNeighbourLeft = (ulong)1 << 7;
 
-        public const ulong maskAllNeighbours = ((1 << 4) - 1) << 4;
+        public const ulong maskAllNeighbours = (((ulong)1 << 4) - 1) << 4;
 
-        public const ulong maskVisited = 1 << 8;
+        public const ulong maskVisited = (ulong)1 << 8;
                     
-        public const ulong maskCameFromLC = ((1 << 8) - 1) << 9; //for labirint creator
+        public const ulong maskCameFromLC = (((ulong)1 << 8) - 1) << 9; //for labirint creator
         public const int GetCameFromLC = 9; //for labirint creator
 
-        public const ulong maskCameFromPF = ((1 << 8) - 1) << 17; //for path finder
+        public const ulong maskCameFromPF = (((ulong)1 << 8) - 1) << 17; //for path finder
         public const int CameFromFirstBitPF = 17; //for path finder
-        public const ulong maskOpenListPF = 1 << 25; //for path finder
+        public const ulong maskOpenListPF = (ulong)1 << 25; //for path finder
         public const int OpenListFirstBitPF = 25; //for path finder
-        public const ulong maskCloseListPF = 1 << 26; //for path finder
-        public const ulong maskGPF = ((ulong)(1 << 8) - 1) << 27; //for path finder
+        public const ulong maskCloseListPF = (ulong)1 << 26; //for path finder
+        public const ulong maskGPF = (((ulong)1 << 8) - 1) << 27; //for path finder
         public const int GFirstBitPF = 27; //for path finder
-        public const ulong maskHPF = ((ulong)(1 << 8) - 1) << 35; //for path finder
+        public const ulong maskHPF = (((ulong)1 << 8) - 1) << 35; //for path finder
         public const int HFirstBitPF = 35; //for path finder
-        public const ulong maskMoveTo = ((ulong)(1 << 8) - 1) << 43; //for path finder
+        public const ulong maskMoveTo = (((ulong)1 << 8) - 1) << 43; //for path finder
         public const int MoveToIndexFirstBitPF = 43; //for path finder
         public const ulong maskAllPF = (((ulong)1 << 34) - 1) << 17; //for path finder
 
@@ -186,9 +186,9 @@ namespace Assets.Scripts
 
         public Vector3 GetPositionByCellIndex(int cellIndex)
         {
-            var x = cellIndex % labirintSize;
+            var x = cellIndex % labirintSize + 0.5f;
             var y = 0;
-            var z = cellIndex / labirintSize;
+            var z = cellIndex / labirintSize + 0.5f;
 
             return new Vector3(x, y, z);
         }
