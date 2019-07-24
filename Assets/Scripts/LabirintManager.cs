@@ -41,23 +41,33 @@ namespace Assets.Scripts
                 }
             }
 
-            ChangeDifficulty(settings.labirintDifficulty);
+            ChangeDifficulty(settings);
         }
 
-        private void ChangeDifficulty(int difficulty)
+        private void ChangeDifficulty(Settings settings)
         {
             for (var i = 0; i < cellManager.cells.Length; i++)
             {
-                if (cellManager.CellWallsCount(cellManager.cells[i]) > difficulty)
+                if (cellManager.CellWallsCount(cellManager.cells[i]) > settings.labirintDifficulty)
                 {
-                    uint randomWall = 0;
+                    ulong randomWall = 0;
                     while (randomWall == 0)
                     {
                         var rd = Random.Range(0, 4);
                         //берем маску с самым правым битом из масок стен и смещаем на случайное число
-                        randomWall = (uint)(cellManager.cells[i] & (CellManager.maskWallTop << rd));
+                        randomWall = (cellManager.cells[i] & (CellManager.maskWallTop << rd));
                     }
                     
+                    //проверка на крайние стены
+                    if(i < settings.labirintSize && randomWall == CellManager.maskWallBottom)
+                        continue;
+                    if (i % settings.labirintSize == 0 && randomWall == CellManager.maskWallLeft)
+                        continue;
+                    if (i >= settings.labirintSize * (settings.labirintSize - 1)  && randomWall == CellManager.maskWallTop)
+                        continue;
+                    if (i % settings.labirintSize == settings.labirintSize - 1 && randomWall == CellManager.maskWallRight)
+                        continue;
+
                     cellManager.RemoveWall(i, i + cellManager.GetNeighbourRelativePosition(randomWall << 4));
                 }
             }

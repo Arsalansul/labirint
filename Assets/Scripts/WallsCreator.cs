@@ -30,12 +30,13 @@ public class WallsCreator : MonoBehaviour
             {
                 for (int j = 0; j < labirintSize; j++) //стены в одном ряде
                 {
-                    if (i == 0 || i == labirintSize) //стены границу
+                    if (i == labirintSize && j ==0) //у последней строки/столбце меняем параметры, чтоб не вылезти за пределы массива
                     {
-                        if (v != exit.x || i!=exit.y || j !=exit.z)
-                            Instantiate(WallGameObject, position, Quaternion.Euler(rotation), walls.transform);
+                        cellDeltaPosition = -cellDeltaPosition;
+                        maskWall = maskWall >> 2;
                     }
-                    else if ((cellManager.GetCellByPosition(position + cellDeltaPosition) & maskWall) != 0 )
+
+                    if ((cellManager.GetCellByPosition(position + cellDeltaPosition) & maskWall) != 0 )
                     {
                         Instantiate(WallGameObject, position, Quaternion.Euler(rotation), walls.transform);
                     }
