@@ -4,6 +4,9 @@ namespace Assets.Scripts
 {
     public class UnitManager : MonoBehaviour
     {
+        private GameObject enemyParent;
+        private GameObject coinParent;
+
         public void InstantiateUnits(Settings settings, CellManager cellManager)
         {
             var player = Instantiate(Resources.Load("Prefabs/Player")) as GameObject;
@@ -12,8 +15,9 @@ namespace Assets.Scripts
             playerUnit.Pos = settings.playerStartPosition;
             playerUnit.moveController = 1;
             playerUnit.cellManager = cellManager;
+            playerUnit.settings = settings;
 
-            GameObject enemyParent = new GameObject("enemies");
+            enemyParent = new GameObject("enemies");
             for (var i = 0; i < settings.enemyCount; i++)
             {
                 var enemy = Instantiate(Resources.Load("Prefabs/Enemy"), enemyParent.transform) as GameObject;
@@ -26,7 +30,7 @@ namespace Assets.Scripts
                 enemyUnit.target = player.transform;
             }
 
-            GameObject coinParent = new GameObject("Coins");
+            coinParent = new GameObject("Coins");
             for (var i = 0; i < settings.coinCount; i++)
             {
                 var coin = Instantiate(Resources.Load("Prefabs/Coin"), coinParent.transform) as GameObject;
@@ -37,6 +41,13 @@ namespace Assets.Scripts
                 coinUnit.moveController = 0;
                 coinUnit.cellManager = cellManager;
             }
+        }
+
+        public void DestroyUnits()
+        {
+            Destroy(enemyParent);
+            Destroy(coinParent);
+            Destroy(GameObject.FindGameObjectWithTag("Player"));
         }
     }
 }

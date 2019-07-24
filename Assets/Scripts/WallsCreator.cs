@@ -7,10 +7,12 @@ public class WallsCreator : MonoBehaviour
 {
     public GameObject WallGameObject;
 
+    private GameObject walls;
+
     public void CreateWalls(CellManager cellManager, Settings settings)
     {
         var labirintSize = settings.labirintSize;
-        GameObject walls = new GameObject("Walls");
+        walls = new GameObject("Walls");
         Vector3 position = new Vector3(0.5f, 0, 0);
         Vector3 rotation = new Vector3(0, 0, 0);
         Vector3 deltaInRow = new Vector3(1, 0, 0);
@@ -50,5 +52,10 @@ public class WallsCreator : MonoBehaviour
             maskWall = CellManager.maskWallLeft;
             cellDeltaPosition = new Vector3(0.5f, 0, 0);
         }
+    }
+
+    public void DestoryWalls()
+    {
+        Destroy(walls);
     }
 }

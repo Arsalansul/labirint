@@ -2,7 +2,7 @@
 
 namespace Assets.Scripts
 {
-    public class Unit :MonoBehaviour
+    public class Unit : MonoBehaviour
     {
         public int moveController; //0 - none, 1- player, 2 - AI
         public CellManager cellManager;
@@ -10,6 +10,8 @@ namespace Assets.Scripts
 
         private PathFinder pathFinder;
         private Vector3 nexpPosition;
+
+        public Settings settings;
 
         public Vector2 Pos
         {
@@ -19,10 +21,7 @@ namespace Assets.Scripts
 
                 return new Vector2(pos.x, pos.z);
             }
-            set
-            {
-               transform.position = new Vector3(value.x + 0.5f, 0, value.y + 0.5f);
-            }
+            set => transform.position = new Vector3(value.x + 0.5f, 0, value.y + 0.5f);
         }
 
         void Start()
@@ -45,6 +44,12 @@ namespace Assets.Scripts
                 
             }
             transform.position = Vector3.MoveTowards(transform.position, nexpPosition, Time.deltaTime);
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.tag == "enemy")
+                settings.GameOver = true;
         }
     }
 }

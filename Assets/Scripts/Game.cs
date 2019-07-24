@@ -10,8 +10,8 @@ namespace Assets.Scripts
         private LabirintManager labirintManager;
         private Settings settings;
 
-        private WallsCreator wallsCreator;
-        private UnitManager unitManager;
+        public WallsCreator wallsCreator;
+        public UnitManager unitManager;
 
         public Game(Settings _settings)
         {

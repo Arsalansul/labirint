@@ -188,7 +188,7 @@ namespace Assets.Scripts
         {
             var x = cellIndex % labirintSize + 0.5f;
             var y = 0;
-            var z = cellIndex / labirintSize + 0.5f;
+            var z = (cellIndex / labirintSize) + 0.5f;
 
             return new Vector3(x, y, z);
         }

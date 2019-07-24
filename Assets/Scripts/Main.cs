@@ -8,6 +8,7 @@ namespace Assets.Scripts
     {
         public Button gameButton;
         public Button quitButton;
+        public Dropdown levelsDropdown;
         
         private Settings settings;
 
@@ -20,6 +21,13 @@ namespace Assets.Scripts
         {
             gameButton.onClick.AddListener(StartGame);
             quitButton.onClick.AddListener(Quit);
+            levelsDropdown.options.Clear();
+            for (var i = 0; i < 50; i++)
+            {
+                levelsDropdown.options.Add(new Dropdown.OptionData("level " + i));
+            }
+
+            levelsDropdown.value = 0;
 
             settings = new Settings();
             settings.labirintSize = 15; //labirintSize*labirintSize ограничено 8 битами
@@ -29,6 +37,15 @@ namespace Assets.Scripts
             canvasGameObject = GameObject.Find("Canvas");
         }
 
+        void Update()
+        {
+            if (settings.GameOver)
+            {
+                GameOver();
+                
+            }
+        }
+
         private void Quit()
         {
             Application.Quit();
@@ -36,9 +53,24 @@ namespace Assets.Scripts
 
         private void StartGame()
         {
+            SetSettingsValues(levelsDropdown.value);
             game = new Game(settings);
             StartCoroutine(game.LoadingScene());
             canvasGameObject.SetActive(false);
+        }
+
+        private void GameOver()
+        {
+            game.unitManager.DestroyUnits();
+            canvasGameObject.SetActive(true);
+            game.wallsCreator.DestoryWalls();
+            settings.GameOver = false;
+        }
+
+        private void SetSettingsValues(int level)
+        {
+            settings.enemyCount = level % 20 + 3;
+            settings.coinCount = level % 20 + 3;
         }
     }
 }

@@ -81,28 +81,30 @@ namespace Assets.Scripts
 
         public int GiveCellIndexToMove(int startCellIndex, int endCellIndex)
         {
-            ClearCells(startCellIndex, endCellIndex);
+            ClearCells();
             FindPath(startCellIndex, endCellIndex);
 
             //проходим путь от конца к началу
             var currentCellIndex = endCellIndex;
             var loop = 0;
-            var zeroCount = 0;
             while (currentCellIndex != startCellIndex)
             {
                 loop++;
                 
                 var nextIndex = (int)((cellManager.cells[currentCellIndex] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF);
+                if (nextIndex > 224 || nextIndex < 0)
+                {
+                    Debug.LogError("out of range. next index " + nextIndex);
+                }
                 cellManager.cells[nextIndex] |= (ulong)currentCellIndex << CellManager.MoveToIndexFirstBitPF; //записываем путь
-                if (nextIndex == 0)
-                    zeroCount++;
+
                 if (loop > 1000)
                 {
                     Debug.Log("nextIndex " + nextIndex + " currentCellIndex " + currentCellIndex + " pathFound " + pathFound + " " + startCellIndex + " " + endCellIndex +
                               " next index move cam from " + ((cellManager.cells[nextIndex] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF) + " zero " + zeroCount);
                     Debug.LogError("start not reached " + startCellIndex + " " + endCellIndex);
 
-                    ClearCells(startCellIndex, endCellIndex);
+                    ClearCells();
 
                     int neighbourIndex = 0;
                     for (var i = 0; i < 4; i++)
@@ -122,24 +124,16 @@ namespace Assets.Scripts
 
             var result = (int) ((cellManager.cells[startCellIndex] & CellManager.maskMoveTo) >> CellManager.MoveToIndexFirstBitPF);
 
-            ClearCells(startCellIndex, endCellIndex);
+            ClearCells();
 
             return result;
         }
 
-        private void ClearCells(int startCellIndex, int endCellIndex)
+        private void ClearCells()
         {
             pathFound = false;
             for (var i = 0; i < cellManager.cells.Length; i++)
             {
-                if (i == startCellIndex)
-                {
-                    Debug.Log("start index " + startCellIndex + " move to " + ((cellManager.cells[i] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF));
-                }
-                if (i == endCellIndex)
-                {
-                    Debug.Log("end index " + endCellIndex + " came from " + ((cellManager.cells[i] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF));
-                }
                 cellManager.cells[i] &= ~CellManager.maskAllPF;
             }
         }
