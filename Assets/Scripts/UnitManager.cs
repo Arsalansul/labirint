@@ -7,9 +7,11 @@ namespace Assets.Scripts
         private GameObject enemyParent;
         private GameObject coinParent;
 
+        public GameObject player;
+
         public void InstantiateUnits(Settings settings, CellManager cellManager)
         {
-            var player = Instantiate(Resources.Load("Prefabs/Player")) as GameObject;
+            player = Instantiate(Resources.Load("Prefabs/Player")) as GameObject;
 
             var playerUnit = player.GetComponent<Unit>();
             playerUnit.Pos = settings.playerStartPosition;

@@ -16,7 +16,6 @@ namespace Assets.Scripts
 
         private Game game;
 
-
         void Start()
         {
             gameButton.onClick.AddListener(StartGame);
