@@ -74,6 +74,8 @@ namespace Assets.Scripts
         {
             settings.enemyCount = level % 20 + 3;
             settings.coinCount = level % 20 + 3;
+            settings.enemySpeed = 0.9f;
+            settings.playerSpeed = 1;
         }
     }
 }

@@ -35,8 +35,8 @@ namespace Assets.Scripts
                         cellManager.RemoveWall(currentCellIndex, randomUnvisitedNeghbourIndex);
 
                         cells[randomUnvisitedNeghbourIndex] &= ~CellManager.maskCameFromLC;
-                        cells[randomUnvisitedNeghbourIndex] |= (ulong) currentCellIndex << CellManager.GetCameFromLC;
-
+                        cellManager.RememberCameFromIndexLC(randomUnvisitedNeghbourIndex, currentCellIndex);
+                        
                         currentCellIndex = randomUnvisitedNeghbourIndex;
                         cellManager.Visited(currentCellIndex);
                         unvisitedCellsCount--;
@@ -44,7 +44,7 @@ namespace Assets.Scripts
                     else //if (path.Count > 0)
                     {
                         currentCellIndex = (int) (cells[currentCellIndex] & CellManager.maskCameFromLC) >>
-                                           CellManager.GetCameFromLC;
+                                           CellManager.CameFromFirstBitLC;
                     }
                 }
             }

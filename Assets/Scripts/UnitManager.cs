@@ -16,6 +16,7 @@ namespace Assets.Scripts
             playerUnit.moveController = 1;
             playerUnit.cellManager = cellManager;
             playerUnit.settings = settings;
+            playerUnit.speed = settings.playerSpeed;
 
             enemyParent = new GameObject("enemies");
             for (var i = 0; i < settings.enemyCount; i++)
@@ -28,6 +29,7 @@ namespace Assets.Scripts
                 enemyUnit.moveController = 2;
                 enemyUnit.cellManager = cellManager;
                 enemyUnit.target = player.transform;
+                enemyUnit.speed = settings.enemySpeed;
             }
 
             coinParent = new GameObject("Coins");
@@ -48,6 +50,11 @@ namespace Assets.Scripts
             Destroy(enemyParent);
             Destroy(coinParent);
             Destroy(GameObject.FindGameObjectWithTag("Player"));
+        }
+
+        private void GetCoinPosition(Settings settings)
+        {
+            int[] coinPositions = new int[settings.coinCount];
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Assets.Scripts
         public const ulong maskVisited = (ulong)1 << 8;
                     
         public const ulong maskCameFromLC = (((ulong)1 << 8) - 1) << 9; //for labirint creator
-        public const int GetCameFromLC = 9; //for labirint creator
+        public const int CameFromFirstBitLC = 9; //for labirint creator
 
         public const ulong maskCameFromPF = (((ulong)1 << 8) - 1) << 17; //for path finder
         public const int CameFromFirstBitPF = 17; //for path finder
@@ -258,9 +258,14 @@ namespace Assets.Scripts
             return ((cells[cellIndex] & maskHPF) >> HFirstBitPF);
         }
 
-        public void RememberCameFromIndex(int cellIndex, int cameFromIndex)
+        public void RememberCameFromIndexPF(int cellIndex, int cameFromIndex)
         {
             cells[cellIndex] |= (ulong)cameFromIndex << CameFromFirstBitPF;
+        }
+
+        public void RememberCameFromIndexLC(int cellIndex, int cameFromIndex)
+        {
+            cells[cellIndex] |= (ulong)cameFromIndex << CameFromFirstBitLC;
         }
 
         public void RememberG(int cellIndex, ulong g)
@@ -294,6 +299,32 @@ namespace Assets.Scripts
         public int GetMoveToIndexPF(int cellIndex)
         {
             return (int)((cells[cellIndex] & maskMoveTo) >> MoveToIndexFirstBitPF);
+        }
+
+        public bool CheckWall(int cellIndex, int neighbourIndex)
+        {
+            if (neighbourIndex < 0 || neighbourIndex >= labirintSize * labirintSize)
+                return true;
+
+            var indexDif = cellIndex - neighbourIndex;
+            if (indexDif == -labirintSize && (cells[cellIndex] & maskWallTop) > 0)
+            {
+                return true;
+            }
+            if (indexDif == -1 && (cells[cellIndex] & maskWallRight) > 0)
+            {
+                return true;
+            }
+             if (indexDif == labirintSize && (cells[cellIndex] & maskWallBottom) > 0)
+            {
+                return true;
+            }
+            if (indexDif == 1 && (cells[cellIndex] & maskWallLeft) > 0)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

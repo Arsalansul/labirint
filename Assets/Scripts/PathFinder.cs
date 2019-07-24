@@ -42,7 +42,7 @@ namespace Assets.Scripts
                     if ((cellManager.cells[childIndex] & CellManager.maskCloseListPF) != 0)
                         continue;
 
-                    cellManager.RememberCameFromIndex(childIndex,currentCellIndex); //запоминаем откуда пришли
+                    cellManager.RememberCameFromIndexPF(childIndex,currentCellIndex); //запоминаем откуда пришли
                     
                     // Create the f, g, and h values
                     //child.g = currentNode.g + distance between child and current

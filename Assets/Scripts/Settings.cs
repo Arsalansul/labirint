@@ -12,5 +12,8 @@ namespace Assets.Scripts
         public Vector2 playerStartPosition;
         public int enemyCount;
         public int coinCount;
+
+        public float enemySpeed;
+        public float playerSpeed;
     }
 }
