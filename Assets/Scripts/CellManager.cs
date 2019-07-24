@@ -218,5 +218,82 @@ namespace Assets.Scripts
             result += Mathf.Abs(cellIndex_1 / labirintSize - cellIndex_2 / labirintSize);
             return result;
         }
+
+        public int OpenListCount()
+        {
+            var result = 0;
+            for (var i = 0; i < cells.Length; i++)
+            {
+                result += (int)((cells[i] & maskOpenListPF) >> OpenListFirstBitPF);
+            }
+            return result;
+        }
+
+        public int GetCellIndexWithLeastF()
+        {
+            var result = -1;
+            uint f_Old = 300;
+            for (var i = 0; i < cells.Length; i++)
+            {
+                if ((cells[i] & maskOpenListPF) == 0) continue;
+                //f = g + h
+                var f = (uint)(((cells[i] & maskGPF) >> GFirstBitPF) + ((cells[i] & maskHPF) >> HFirstBitPF));
+
+                if (f >= f_Old) continue;
+                result = i;
+                f_Old = f;
+            }
+            if (result == -1)
+                Debug.LogError("f_Old " + f_Old);
+            return result;
+        }
+
+        public ulong GetG(int cellIndex)
+        {
+            return ((cells[cellIndex] & maskGPF) >> GFirstBitPF);
+        }
+
+        public ulong GetH(int cellIndex)
+        {
+            return ((cells[cellIndex] & maskHPF) >> HFirstBitPF);
+        }
+
+        public void RememberCameFromIndex(int cellIndex, int cameFromIndex)
+        {
+            cells[cellIndex] |= (ulong)cameFromIndex << CameFromFirstBitPF;
+        }
+
+        public void RememberG(int cellIndex, ulong g)
+        {
+            cells[cellIndex] |= g << GFirstBitPF;
+        }
+
+        public void RememberH(int cellIndex, ulong h)
+        {
+            cells[cellIndex] |= h << HFirstBitPF;
+        }
+
+        public void RememberMoveToIndex(int cellIndex, int moveToIndex)
+        {
+            cells[cellIndex] |= (ulong)moveToIndex << MoveToIndexFirstBitPF;
+        }
+
+        public void ClearCellsAfterPF()
+        {
+            for (var i = 0; i < cells.Length; i++)
+            {
+                cells[i] &= ~maskAllPF;
+            }
+        }
+
+        public int GetCameFromIndexPF(int cellIndex)
+        {
+            return (int)((cells[cellIndex] & maskCameFromPF) >> CameFromFirstBitPF);
+        }
+
+        public int GetMoveToIndexPF(int cellIndex)
+        {
+            return (int)((cells[cellIndex] & maskMoveTo) >> MoveToIndexFirstBitPF);
+        }
     }
 }
