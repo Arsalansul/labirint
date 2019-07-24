@@ -66,8 +66,11 @@ namespace Assets.Scripts
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.tag == "enemy")
+            if (other.tag == "enemy" && gameObject.tag == "Player")
                 settings.GameOver = true;
+
+            if (other.tag == "Player")
+                Destroy(gameObject);
         }
 
         private Vector3 GetInputVector()

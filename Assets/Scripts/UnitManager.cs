@@ -9,9 +9,13 @@ namespace Assets.Scripts
 
         public GameObject player;
 
+        private GameObject Units;
+
         public void InstantiateUnits(Settings settings, CellManager cellManager)
         {
-            player = Instantiate(Resources.Load("Prefabs/Player")) as GameObject;
+            Units = new GameObject("Units");
+
+            player = Instantiate(Resources.Load("Prefabs/Player"),Units.transform) as GameObject;
 
             var playerUnit = player.GetComponent<Unit>();
             playerUnit.Pos = settings.playerStartPosition;
@@ -21,6 +25,7 @@ namespace Assets.Scripts
             playerUnit.speed = settings.playerSpeed;
 
             enemyParent = new GameObject("enemies");
+            enemyParent.transform.SetParent(Units.transform);
             for (var i = 0; i < settings.enemyCount; i++)
             {
                 var enemy = Instantiate(Resources.Load("Prefabs/Enemy"), enemyParent.transform) as GameObject;
@@ -35,6 +40,7 @@ namespace Assets.Scripts
             }
 
             coinParent = new GameObject("Coins");
+            coinParent.transform.SetParent(Units.transform);
             for (var i = 0; i < settings.coinCount; i++)
             {
                 var coin = Instantiate(Resources.Load("Prefabs/Coin"), coinParent.transform) as GameObject;
@@ -49,9 +55,7 @@ namespace Assets.Scripts
 
         public void DestroyUnits()
         {
-            Destroy(enemyParent);
-            Destroy(coinParent);
-            Destroy(GameObject.FindGameObjectWithTag("Player"));
+            Destroy(Units);
         }
 
         private void GetCoinPosition(Settings settings)
