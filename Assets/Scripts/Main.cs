@@ -35,6 +35,8 @@ namespace Assets.Scripts
             settings.playerStartPosition = new Vector2(settings.labirintSize / 2, settings.labirintSize / 2);
 
             canvasGameObject = GameObject.Find("Canvas");
+
+            SceneManager.LoadScene("Game", LoadSceneMode.Additive);
         }
 
         void Update()
@@ -42,7 +44,6 @@ namespace Assets.Scripts
             if (settings.GameOver)
             {
                 GameOver();
-                
             }
         }
 
@@ -55,7 +56,8 @@ namespace Assets.Scripts
         {
             SetSettingsValues(levelsDropdown.value);
             game = new Game(settings);
-            StartCoroutine(game.LoadingScene());
+            SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(1));
+            game.LoadSceneObjects();
             canvasGameObject.SetActive(false);
         }
 
@@ -64,6 +66,7 @@ namespace Assets.Scripts
             game.unitManager.DestroyUnits();
             canvasGameObject.SetActive(true);
             game.wallsCreator.DestoryWalls();
+            game = null;
             settings.GameOver = false;
         }
 

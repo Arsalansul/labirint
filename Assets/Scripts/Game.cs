@@ -22,7 +22,7 @@ namespace Assets.Scripts
             unitManager = new UnitManager();
         }
 
-        private void LoadSceneObjects()
+        public void LoadSceneObjects()
         {
             wallsCreator.WallGameObject = Resources.Load<GameObject>("Prefabs/Wall");
             
@@ -30,15 +30,6 @@ namespace Assets.Scripts
             wallsCreator.CreateWalls(cellManager, settings);
             
             unitManager.InstantiateUnits(settings, cellManager);
-        }
-
-        public IEnumerator LoadingScene()
-        {
-            SceneManager.LoadScene("Game", LoadSceneMode.Additive);
-
-            yield return new WaitForFixedUpdate();
-            SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(1));
-            LoadSceneObjects();
         }
 
     }

@@ -64,7 +64,7 @@ namespace Assets.Scripts
             DefaultCell();
         }
 
-        public void DefaultCell()
+        private void DefaultCell()
         {
             for (var i = 0; i < cells.Length; i++)
             {

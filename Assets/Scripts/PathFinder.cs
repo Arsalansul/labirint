@@ -101,7 +101,7 @@ namespace Assets.Scripts
                 if (loop > 1000)
                 {
                     Debug.Log("nextIndex " + nextIndex + " currentCellIndex " + currentCellIndex + " pathFound " + pathFound + " " + startCellIndex + " " + endCellIndex +
-                              " next index move cam from " + ((cellManager.cells[nextIndex] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF) + " zero " + zeroCount);
+                              " next index move cam from " + ((cellManager.cells[nextIndex] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF));
                     Debug.LogError("start not reached " + startCellIndex + " " + endCellIndex);
 
                     ClearCells();
