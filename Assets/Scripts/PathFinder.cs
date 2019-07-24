@@ -158,7 +158,7 @@ namespace Assets.Scripts
             return result;
         }
 
-        private ulong GetG(ulong cellIndex)
+        private ulong GetG(int cellIndex)
         {
             return ((cellManager.cells[cellIndex] & CellManager.maskGPF) >> CellManager.GFirstBitPF);
         }
