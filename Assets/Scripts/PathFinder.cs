@@ -81,41 +81,65 @@ namespace Assets.Scripts
 
         public int GiveCellIndexToMove(int startCellIndex, int endCellIndex)
         {
-            ClearCells();
+            ClearCells(startCellIndex, endCellIndex);
             FindPath(startCellIndex, endCellIndex);
 
             //проходим путь от конца к началу
             var currentCellIndex = endCellIndex;
             var loop = 0;
+            var zeroCount = 0;
             while (currentCellIndex != startCellIndex)
             {
                 loop++;
+                
                 var nextIndex = (int)((cellManager.cells[currentCellIndex] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF);
                 cellManager.cells[nextIndex] |= (ulong)currentCellIndex << CellManager.MoveToIndexFirstBitPF; //записываем путь
-                
+                if (nextIndex == 0)
+                    zeroCount++;
                 if (loop > 1000)
                 {
-                    Debug.Log("nextIndex " + nextIndex + " currentCellIndex " + currentCellIndex + " pathFound " + pathFound);
-                    Debug.LogError("start not reached");
+                    Debug.Log("nextIndex " + nextIndex + " currentCellIndex " + currentCellIndex + " pathFound " + pathFound + " " + startCellIndex + " " + endCellIndex +
+                              " next index move cam from " + ((cellManager.cells[nextIndex] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF) + " zero " + zeroCount);
+                    Debug.LogError("start not reached " + startCellIndex + " " + endCellIndex);
 
-                    ClearCells();
-                    return startCellIndex;
+                    ClearCells(startCellIndex, endCellIndex);
+
+                    int neighbourIndex = 0;
+                    for (var i = 0; i < 4; i++)
+                    {
+                        //find child
+                        var maskWall = CellManager.maskWallTop << i;
+                        if ((cellManager.cells[currentCellIndex] & maskWall) != 0)
+                            continue;
+
+                        neighbourIndex = currentCellIndex + cellManager.GetNeighbourRelativePosition(maskWall << 4);
+                    }
+
+                    return neighbourIndex;
                 }
                 currentCellIndex = nextIndex;
             }
 
             var result = (int) ((cellManager.cells[startCellIndex] & CellManager.maskMoveTo) >> CellManager.MoveToIndexFirstBitPF);
 
-            ClearCells();
+            ClearCells(startCellIndex, endCellIndex);
 
             return result;
         }
 
-        private void ClearCells()
+        private void ClearCells(int startCellIndex, int endCellIndex)
         {
             pathFound = false;
             for (var i = 0; i < cellManager.cells.Length; i++)
             {
+                if (i == startCellIndex)
+                {
+                    Debug.Log("start index " + startCellIndex + " move to " + ((cellManager.cells[i] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF));
+                }
+                if (i == endCellIndex)
+                {
+                    Debug.Log("end index " + endCellIndex + " came from " + ((cellManager.cells[i] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF));
+                }
                 cellManager.cells[i] &= ~CellManager.maskAllPF;
             }
         }
