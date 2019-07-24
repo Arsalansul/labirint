@@ -70,7 +70,14 @@ namespace Assets.Scripts
             {
                 cells[i] |= maskAllWalls; //set walls
 
-                //set unvisited neighbours
+                SetUnvisitedNeighbours();
+            }
+        }
+
+        public void SetUnvisitedNeighbours()
+        {
+            for (var i = 0; i < cells.Length; i++)
+            {
                 if (i < cells.Length - labirintSize)
                 {
                     cells[i] |= maskNeighbourTop;

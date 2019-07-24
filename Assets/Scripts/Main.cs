@@ -30,8 +30,8 @@ namespace Assets.Scripts
             levelsDropdown.value = 0;
 
             settings = new Settings();
-            settings.labirintSize = 15; //labirintSize*labirintSize ограничено 8 битами
-            settings.labirintDifficulty = 3; //от 0 до 3
+            settings.labirintSize = 15;
+            settings.labirintDifficulty = 1;
             settings.playerStartPosition = new Vector2(settings.labirintSize / 2, settings.labirintSize / 2);
 
             canvasGameObject = GameObject.Find("Canvas");

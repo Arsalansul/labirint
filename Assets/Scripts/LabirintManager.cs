@@ -14,34 +14,42 @@ namespace Assets.Scripts
 
         public void CreateLabirint(Settings settings)
         {
-            var cells = cellManager.cells;
-            cellManager.Visited(0);
-
-            var unvisitedCellsCount = cells.Length - 1;
-
-            var currentCellIndex = 0;
-
-            while (unvisitedCellsCount > 0)
+            for (int i = 0; i < settings.labirintDifficulty; i++)
             {
-                if ((cells[currentCellIndex] & CellManager.maskAllNeighbours) != 0)
-                {
-                    int randomUnvisitedNeghbourIndex = currentCellIndex + cellManager.GetRandomUnvisitedNeghbourRelativePosition(cells[currentCellIndex]);
-                    cellManager.RemoveWall(currentCellIndex, randomUnvisitedNeghbourIndex);
+                var cells = cellManager.cells;
+                cellManager.SetUnvisitedNeighbours();
 
-                    cells[randomUnvisitedNeghbourIndex] &= ~CellManager.maskCameFromLC;
-                    cells[randomUnvisitedNeghbourIndex] |= (ulong)currentCellIndex << CellManager.GetCameFromLC;
+                cellManager.Visited(0);
 
-                    currentCellIndex = randomUnvisitedNeghbourIndex;
-                    cellManager.Visited(currentCellIndex);
-                    unvisitedCellsCount--;
-                }
-                else //if (path.Count > 0)
+                var unvisitedCellsCount = cells.Length - 1;
+
+                var currentCellIndex = 0;
+
+                while (unvisitedCellsCount > 0)
                 {
-                    currentCellIndex = (int)(cells[currentCellIndex] & CellManager.maskCameFromLC) >> CellManager.GetCameFromLC;
+                    if ((cells[currentCellIndex] & CellManager.maskAllNeighbours) != 0)
+                    {
+                        int randomUnvisitedNeghbourIndex =
+                            currentCellIndex +
+                            cellManager.GetRandomUnvisitedNeghbourRelativePosition(cells[currentCellIndex]);
+                        cellManager.RemoveWall(currentCellIndex, randomUnvisitedNeghbourIndex);
+
+                        cells[randomUnvisitedNeghbourIndex] &= ~CellManager.maskCameFromLC;
+                        cells[randomUnvisitedNeghbourIndex] |= (ulong) currentCellIndex << CellManager.GetCameFromLC;
+
+                        currentCellIndex = randomUnvisitedNeghbourIndex;
+                        cellManager.Visited(currentCellIndex);
+                        unvisitedCellsCount--;
+                    }
+                    else //if (path.Count > 0)
+                    {
+                        currentCellIndex = (int) (cells[currentCellIndex] & CellManager.maskCameFromLC) >>
+                                           CellManager.GetCameFromLC;
+                    }
                 }
             }
 
-            ChangeDifficulty(settings);
+            //ChangeDifficulty(settings);
         }
 
         private void ChangeDifficulty(Settings settings)

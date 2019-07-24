@@ -16,7 +16,7 @@ namespace Assets.Scripts
             cellManager = _cellManager;
         }
 
-        private bool pathFound;
+        
         private void FindPath(int currentCellIndex, int endCellIndex)
         {
             cellManager.cells[currentCellIndex] |= CellManager.maskOpenListPF; //add current cell to open list
@@ -31,7 +31,6 @@ namespace Assets.Scripts
 
                 if (currentCellIndex == endCellIndex) //found the end
                 {
-                    pathFound = true;
                     break;
                 }
 
@@ -55,9 +54,8 @@ namespace Assets.Scripts
                     //child.h = distance from child to end
                     //child.f = child.g + child.h;
 
-                    var g = ((cellManager.cells[currentCellIndex] & CellManager.maskGPF) >> CellManager.GFirstBitPF) + 1;
-                    if ((cellManager.cells[childIndex] & CellManager.maskOpenListPF) != 0 &&
-                        g > ((cellManager.cells[childIndex] & CellManager.maskGPF) >> CellManager.GFirstBitPF))
+                    var g = GetG(currentCellIndex) + 1;
+                    if ((cellManager.cells[childIndex] & CellManager.maskOpenListPF) != 0 && g > GetG(childIndex))
                         continue;
 
                     cellManager.cells[childIndex] |= g << CellManager.GFirstBitPF;
@@ -67,8 +65,6 @@ namespace Assets.Scripts
 
                     // Add the child to the openList
                     cellManager.cells[childIndex] |= CellManager.maskOpenListPF;
-
-                    pathFound = false;
                 }
 
                 if (loop > 300)
@@ -94,28 +90,24 @@ namespace Assets.Scripts
                 var nextIndex = (int)((cellManager.cells[currentCellIndex] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF);
                 if (nextIndex > 224 || nextIndex < 0)
                 {
-                    Debug.LogError("out of range. next index " + nextIndex);
+                    Debug.LogError("out of range. next index " + nextIndex + " current index " + currentCellIndex + " current cell " + cellManager.cells[currentCellIndex]);
                 }
                 cellManager.cells[nextIndex] |= (ulong)currentCellIndex << CellManager.MoveToIndexFirstBitPF; //записываем путь
 
                 if (loop > 1000)
                 {
-                    Debug.Log("nextIndex " + nextIndex + " currentCellIndex " + currentCellIndex + " pathFound " + pathFound + " " + startCellIndex + " " + endCellIndex +
-                              " next index move cam from " + ((cellManager.cells[nextIndex] & CellManager.maskCameFromPF) >> CellManager.CameFromFirstBitPF));
-                    Debug.LogError("start not reached " + startCellIndex + " " + endCellIndex + " cell " + cellManager.cells[startCellIndex] + " end " + cellManager.cells[endCellIndex]);
-
-                    
-                    int neighbourIndex = 0;
-                    for (var i = 0; i < 4; i++)
-                    {
-                        //find child
-                        var maskWall = CellManager.maskWallTop << i;
-                        if ((cellManager.cells[currentCellIndex] & maskWall) != 0)
-                            continue;
-
-                        neighbourIndex = currentCellIndex + cellManager.GetNeighbourRelativePosition(maskWall << 4);
-                    }
-
+                    Debug.LogError(" h " + (cellManager.cells[nextIndex] & CellManager.maskHPF >> CellManager.HFirstBitPF));
+                    //ulong neighbourIndex = 0;
+                    //for (var i = 0; i < 4; i++)
+                    //{
+                    //    //find child
+                    //    var maskWall = CellManager.maskWallTop << i;
+                    //    if ((cellManager.cells[currentCellIndex] & maskWall) != 0)
+                    //        continue;
+                    //
+                    //    neighbourIndex = currentCellIndex + (ulong)cellManager.GetNeighbourRelativePosition(maskWall << 4);
+                    //}
+                    //
                     ClearCells();
                     return startCellIndex;
                 }
@@ -131,7 +123,6 @@ namespace Assets.Scripts
 
         private void ClearCells()
         {
-            pathFound = false;
             for (var i = 0; i < cellManager.cells.Length; i++)
             {
                 cellManager.cells[i] &= ~CellManager.maskAllPF;
@@ -165,6 +156,11 @@ namespace Assets.Scripts
             if (result == -1)
                 Debug.LogError("f_Old " + f_Old);
             return result;
+        }
+
+        private ulong GetG(ulong cellIndex)
+        {
+            return ((cellManager.cells[cellIndex] & CellManager.maskGPF) >> CellManager.GFirstBitPF);
         }
     }
 }
