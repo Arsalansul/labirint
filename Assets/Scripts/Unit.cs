@@ -17,7 +17,7 @@ namespace Assets.Scripts
 
         public Settings settings;
 
-        private Vector2 changeAxis;
+        private bool changeAxis;
         public Vector2 Pos
         {
             get
@@ -34,8 +34,6 @@ namespace Assets.Scripts
             pathFinder = new PathFinder(cellManager);
             nextPosition = transform.position;
             startPosition = transform.position;
-
-            changeAxis = new Vector2(1,0);
         }
 
         void Update()
@@ -53,14 +51,14 @@ namespace Assets.Scripts
 
             if (moveController == 1 && InputKeyPressed())
             {
-                var nextCellIndex = cellManager.GetCellIndexByPosition(transform.position + GetInputVector().normalized);
                 var currentCellIndex = cellManager.GetCellIndexByPosition(transform.position);
-
-                if (!cellManager.CheckWall(currentCellIndex, GetInputVector().normalized))
+                var inputVector = GetInputVector().normalized;
+                if (!cellManager.CheckWall(currentCellIndex, inputVector))
                 {
+                    var nextCellIndex = cellManager.GetCellIndexByPosition(transform.position + inputVector);
                     nextPosition = cellManager.GetPositionByCellIndex(nextCellIndex);
                 }
-                else if (cellManager.CheckExit(currentCellIndex, GetInputVector().normalized))
+                else if (cellManager.CheckExit(currentCellIndex, inputVector))
                 {
                     settings.Win = true;
                 }
@@ -96,24 +94,36 @@ namespace Assets.Scripts
         private Vector3 GetInputVector()
         {
             var inputVector = new Vector3(0, 0, 0);
-            if (Input.GetAxis("Horizontal") * Input.GetAxis("Horizontal") > 0.05f && Input.GetAxis("Vertical") * Input.GetAxis("Vertical") > 0.05f)
-            {
-                inputVector.x = Input.GetAxis("Horizontal") * changeAxis.x;
-                inputVector.z = Input.GetAxis("Vertical") * changeAxis.y;
 
-                var temp = changeAxis.x;
-                changeAxis.x = changeAxis.y;
-                changeAxis.y = temp;
-            }
-            else if (Input.GetAxis("Horizontal") * Input.GetAxis("Horizontal") > 0.05f)
+            if (changeAxis)
             {
-                inputVector.x = Input.GetAxis("Horizontal");
-                inputVector.z = 0;
+                if (Input.GetAxis("Horizontal") * Input.GetAxis("Horizontal") > 0.05f)
+                {
+                    inputVector.x = Input.GetAxis("Horizontal");
+                    inputVector.z = 0;
+                }
+                if (Input.GetAxis("Vertical") * Input.GetAxis("Vertical") > 0.05f)
+                {
+                    inputVector.x = 0;
+                    inputVector.z = Input.GetAxis("Vertical");
+                }
+
+                changeAxis = false;
             }
-            else if (Input.GetAxis("Vertical") * Input.GetAxis("Vertical") > 0.05f)
+            else
             {
-                inputVector.x = 0;
-                inputVector.z = Input.GetAxis("Vertical");
+                if (Input.GetAxis("Vertical") * Input.GetAxis("Vertical") > 0.05f)
+                {
+                    inputVector.x = 0;
+                    inputVector.z = Input.GetAxis("Vertical");
+                }
+                if (Input.GetAxis("Horizontal") * Input.GetAxis("Horizontal") > 0.05f)
+                {
+                    inputVector.x = Input.GetAxis("Horizontal");
+                    inputVector.z = 0;
+                }
+
+                changeAxis = true;
             }
 
             return inputVector;
