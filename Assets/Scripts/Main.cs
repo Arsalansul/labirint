@@ -76,6 +76,11 @@ namespace Assets.Scripts
             settings.enemySpeed = 0.9f;
             settings.playerSpeed = 1;
             settings.enemyDetectTargetDistance = 4 + level / 20;
+            settings.enemyLostTargetDistance = 6 + level / 20;
+            if (level == 40)
+            {
+                settings.enemyLostTargetDistance ++;
+            }
         }
     }
 }

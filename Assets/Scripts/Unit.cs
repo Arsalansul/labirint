@@ -9,6 +9,7 @@ namespace Assets.Scripts
         public Transform target;
 
         public float speed;
+        private bool detectTarget;
 
         private PathFinder pathFinder;
         private Vector3 nextPosition;
@@ -54,13 +55,17 @@ namespace Assets.Scripts
                 if (!cellManager.CheckWall(cellManager.GetCellIndexByPosition(transform.position), nextCellIndex))
                     nextPosition = cellManager.GetPositionByCellIndex(nextCellIndex);
             }
-            else if (moveController == 2 && transform.position != target.position && DetectTarget())
+            else if (moveController == 2 && transform.position != target.position)
             {
-                var cellIndexToMove = pathFinder.GiveCellIndexToMove(
-                    cellManager.GetCellIndexByPosition(transform.position),
-                    cellManager.GetCellIndexByPosition(target.position));
+                Radar();
+                if (detectTarget)
+                {
+                    var cellIndexToMove = pathFinder.GiveCellIndexToMove(
+                        cellManager.GetCellIndexByPosition(transform.position),
+                        cellManager.GetCellIndexByPosition(target.position));
 
-                nextPosition = cellManager.GetPositionByCellIndex(cellIndexToMove);
+                    nextPosition = cellManager.GetPositionByCellIndex(cellIndexToMove);
+                }
             }
         }
 
@@ -105,10 +110,14 @@ namespace Assets.Scripts
                    Input.GetAxis("Vertical") * Input.GetAxis("Vertical") > 0.05f;
         }
 
-        private bool DetectTarget()
+        private void Radar()
         {
             var distance = (target.transform.position - transform.position).magnitude;
-            return distance < settings.enemyDetectTargetDistance;
+            if (distance < settings.enemyDetectTargetDistance)
+                detectTarget = true;
+
+            if (distance > settings.enemyLostTargetDistance)
+                detectTarget = false;
         }
     }
 }
