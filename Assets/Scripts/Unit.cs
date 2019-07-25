@@ -13,6 +13,7 @@ namespace Assets.Scripts
 
         private PathFinder pathFinder;
         private Vector3 nextPosition;
+        private Vector3 startPosition;
 
         public Settings settings;
 
@@ -32,6 +33,7 @@ namespace Assets.Scripts
         {
             pathFinder = new PathFinder(cellManager);
             nextPosition = transform.position;
+            startPosition = transform.position;
             changeAxis = new Vector2(1,0);
         }
 
@@ -58,14 +60,19 @@ namespace Assets.Scripts
             else if (moveController == 2 && transform.position != target.position)
             {
                 Radar();
+                var currentCell = cellManager.GetCellIndexByPosition(transform.position);
+                int cellIndexToMove;
                 if (detectTarget)
                 {
-                    var cellIndexToMove = pathFinder.GiveCellIndexToMove(
-                        cellManager.GetCellIndexByPosition(transform.position),
-                        cellManager.GetCellIndexByPosition(target.position));
-
-                    nextPosition = cellManager.GetPositionByCellIndex(cellIndexToMove);
+                    cellIndexToMove = pathFinder.GiveCellIndexToMove(currentCell, cellManager.GetCellIndexByPosition(target.position));
                 }
+                else
+                {
+                    var randomCellInDistance = pathFinder.GetRandomCellIndexInDistance(currentCell, 3);
+                    
+                    cellIndexToMove = pathFinder.GiveCellIndexToMove(currentCell, randomCellInDistance);
+                }
+                nextPosition = cellManager.GetPositionByCellIndex(cellIndexToMove);
             }
         }
 
@@ -112,7 +119,7 @@ namespace Assets.Scripts
 
         private void Radar()
         {
-            var distance = (target.transform.position - transform.position).magnitude;
+            var distance = (target.position - transform.position).magnitude;
             if (distance < settings.enemyDetectTargetDistance)
                 detectTarget = true;
 

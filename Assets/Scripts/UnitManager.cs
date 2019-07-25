@@ -11,6 +11,8 @@ namespace Assets.Scripts
 
         private GameObject Units;
 
+        private PathFinder pathFinder;
+
         public void InstantiateUnits(Settings settings, CellManager cellManager)
         {
             Units = new GameObject("Units");
@@ -40,6 +42,7 @@ namespace Assets.Scripts
                 enemyUnit.speed = settings.enemySpeed;
             }
 
+            pathFinder = new PathFinder(cellManager);
             coinParent = new GameObject("Coins");
             coinParent.transform.SetParent(Units.transform);
 
@@ -84,56 +87,19 @@ namespace Assets.Scripts
             cellManager.SetCoinInCell(cellIndex);
             cellManager.CoinNegativePoint(cellIndex);
             SetCoinNegativePoints(cellIndex, distance, cellManager);
-
-            cellManager.ClearCellsAfterPF();
         }
         
         private void SetCoinNegativePoints (int cellIndex, int distance, CellManager cellManager)
         { 
-            cellManager.AddToOpenList(cellIndex);
+            pathFinder.FindCellsInDistance(cellIndex, distance);
 
-            var loop = 0;
-            while (cellManager.OpenListCount() > 0)
+            for (int i = 0; i < cellManager.cells.Length; i++)
             {
-                loop++;
-
-                cellIndex = cellManager.GetCellIndexFromOpenList();
-
-                cellManager.RemoveFromOpenList(cellIndex);
-                cellManager.AddToCloseList(cellIndex);
-
-                for (var i = 0; i < 4; i++)
-                {
-                    //find child
-                    var maskWall = CellManager.maskWallTop << i;
-                    if ((cellManager.cells[cellIndex] & maskWall) != 0)
-                        continue;
-
-                    var childIndex = cellIndex + cellManager.GetNeighbourRelativePosition(maskWall << 4);
-
-                    // Child is on the closedList
-                    if ((cellManager.cells[childIndex] & CellManager.maskCloseListPF) != 0)
-                        continue;
-
-                    cellManager.CoinNegativePoint(childIndex);
-
-                    var g = cellManager.GetG(cellIndex) + 1;
-                    if ((cellManager.cells[childIndex] & CellManager.maskOpenListPF) != 0 && g > cellManager.GetG(childIndex))
-                        continue;
-
-                    cellManager.RememberG(childIndex, g);
-                    
-                    // Add the child to the openList
-                    if (g < (ulong)distance)
-                        cellManager.AddToOpenList(childIndex);
-                }
-
-                if (loop > 300)
-                {
-                    Debug.LogError("open list does not end");
-                    break;
-                }
+                if ((cellManager.cells[i] & CellManager.maskGPF) != 0)
+                    cellManager.CoinNegativePoint(i);
             }
+
+            cellManager.ClearCellsAfterPF();
         }
     }
 }
