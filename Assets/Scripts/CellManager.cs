@@ -57,6 +57,7 @@ namespace Assets.Scripts
         public const ulong maskAllPF = (((ulong)1 << 34) - 1) << 17; //for path finder
 
         public const ulong maskCoin = (ulong)1 << 51; //coin in this cell
+        public const ulong maskCoinNegativePoint = (ulong)1 << 52; //can't spawn coin in this cell
 
 
         private readonly int labirintSize;
@@ -252,6 +253,19 @@ namespace Assets.Scripts
             return result;
         }
 
+        public int GetCellIndexFromOpenList()
+        {
+            var result = -1;
+            for (var i = 0; i < cells.Length; i++)
+            {
+                if ((cells[i] & maskOpenListPF) != 0)
+                    result = i;
+            }
+            if (result == -1)
+                Debug.LogError("open list is empty");
+            return result;
+        }
+
         public ulong GetG(int cellIndex)
         {
             return ((cells[cellIndex] & maskGPF) >> GFirstBitPF);
@@ -334,6 +348,39 @@ namespace Assets.Scripts
         public void SetCoinInCell(int cellIndex)
         {
             cells[cellIndex] |= maskCoin;
+        }
+
+        public void CoinNegativePoint(int cellIndex)
+        {
+            cells[cellIndex] |= maskCoinNegativePoint;
+        }
+
+        public int CountCoinPositions()
+        {
+            var result = 0;
+            for (int i = 0; i < cells.Length; i++)
+            {
+                if ((cells[i] & maskCoinNegativePoint) == 0)
+                {
+                    result++;
+                }
+            }
+            return result;
+        }
+
+        public void AddToOpenList(int cellIndex)
+        {
+            cells[cellIndex] |= maskOpenListPF;
+        }
+
+        public void RemoveFromOpenList(int cellIndex)
+        {
+            cells[cellIndex] &= ~maskOpenListPF;
+        }
+
+        public void AddToCloseList(int cellIndex)
+        {
+            cells[cellIndex] |= maskCloseListPF;
         }
     }
 }

@@ -42,7 +42,11 @@ namespace Assets.Scripts
             coinParent = new GameObject("Coins");
             coinParent.transform.SetParent(Units.transform);
 
-            GenerateCoinPositions(settings, cellManager);
+            for (int i = 0; i < settings.coinCount; i++)
+            {
+                GenerateCoinPosition(4, cellManager);
+            }
+
             for (var i = 0; i < cellManager.cells.Length; i++)
             {
                 if ((cellManager.cells[i] & CellManager.maskCoin) == 0)
@@ -62,9 +66,73 @@ namespace Assets.Scripts
             Destroy(Units);
         }
 
-        private void GenerateCoinPositions(Settings settings, CellManager cellManager)
+        private void GenerateCoinPosition(int distance, CellManager cellManager)
         {
-            cellManager.SetCoinInCell(Random.Range(0, settings.labirintSize));
+            if (cellManager.CountCoinPositions() == 0)
+            {
+                Debug.LogError("Don't have free coin positions");
+                return;
+            }
+
+            var cellIndex = Random.Range(0, cellManager.cells.Length);
+            while ((cellManager.cells[cellIndex] & CellManager.maskCoinNegativePoint) != 0)
+            {
+                cellIndex = Random.Range(0, cellManager.cells.Length);
+            }
+            
+            cellManager.SetCoinInCell(cellIndex);
+            cellManager.CoinNegativePoint(cellIndex);
+            SetCoinNegativePoints(cellIndex, distance, cellManager);
+
+            cellManager.ClearCellsAfterPF();
+        }
+        
+        private void SetCoinNegativePoints (int cellIndex, int distance, CellManager cellManager)
+        { 
+            cellManager.AddToOpenList(cellIndex);
+
+            var loop = 0;
+            while (cellManager.OpenListCount() > 0)
+            {
+                loop++;
+
+                cellIndex = cellManager.GetCellIndexFromOpenList();
+
+                cellManager.RemoveFromOpenList(cellIndex);
+                cellManager.AddToCloseList(cellIndex);
+
+                for (var i = 0; i < 4; i++)
+                {
+                    //find child
+                    var maskWall = CellManager.maskWallTop << i;
+                    if ((cellManager.cells[cellIndex] & maskWall) != 0)
+                        continue;
+
+                    var childIndex = cellIndex + cellManager.GetNeighbourRelativePosition(maskWall << 4);
+
+                    // Child is on the closedList
+                    if ((cellManager.cells[childIndex] & CellManager.maskCloseListPF) != 0)
+                        continue;
+
+                    cellManager.CoinNegativePoint(childIndex);
+
+                    var g = cellManager.GetG(cellIndex) + 1;
+                    if ((cellManager.cells[childIndex] & CellManager.maskOpenListPF) != 0 && g > cellManager.GetG(childIndex))
+                        continue;
+
+                    cellManager.RememberG(childIndex, g);
+                    
+                    // Add the child to the openList
+                    if (g < (ulong)distance)
+                        cellManager.AddToOpenList(childIndex);
+                }
+
+                if (loop > 300)
+                {
+                    Debug.LogError("open list does not end");
+                    break;
+                }
+            }
         }
     }
 }
