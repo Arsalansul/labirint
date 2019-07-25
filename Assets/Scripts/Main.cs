@@ -29,9 +29,6 @@ namespace Assets.Scripts
             levelsDropdown.value = 0;
 
             settings = new Settings();
-            settings.labirintSize = 15;
-            settings.labirintDifficulty = 1;
-            settings.playerStartPosition = new Vector2(settings.labirintSize / 2, settings.labirintSize / 2);
 
             canvasGameObject = GameObject.Find("Canvas");
 
@@ -71,10 +68,17 @@ namespace Assets.Scripts
 
         private void SetSettingsValues(int level)
         {
+            settings.labirintSize = 15;
+            settings.labirintDifficulty = 2;
+
+            settings.playerStartPosition = new Vector2(settings.labirintSize / 2, settings.labirintSize / 2);
+
             settings.enemyCount = level % 20 + 3;
             settings.coinCount = level % 20 + 3;
+
             settings.enemySpeed = 0.9f;
             settings.playerSpeed = 1;
+
             settings.enemyDetectTargetDistance = 4 + level / 20;
             settings.enemyLostTargetDistance = 6 + level / 20;
             if (level == 40)
