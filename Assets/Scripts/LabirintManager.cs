@@ -18,6 +18,8 @@ namespace Assets.Scripts
             {
                 Labirint();
             }
+
+            CreateExit(settings);
         }
 
         private void Labirint()
@@ -53,6 +55,14 @@ namespace Assets.Scripts
                                        CellManager.CameFromFirstBitLC;
                 }
             }
+        }
+
+        private void CreateExit(Settings settings)
+        {
+            var exitS = Random.Range(0, 4); //сторона. 0- топ, 1 - право, 2 - низ, 3 - лево
+            var exitN = Random.Range(0, settings.labirintSize);
+
+            cellManager.SetExit(exitS, exitN);
         }
 
     }

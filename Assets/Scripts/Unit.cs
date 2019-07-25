@@ -54,9 +54,16 @@ namespace Assets.Scripts
             if (moveController == 1 && InputKeyPressed())
             {
                 var nextCellIndex = cellManager.GetCellIndexByPosition(transform.position + GetInputVector().normalized);
-                
-                if (!cellManager.CheckWall(cellManager.GetCellIndexByPosition(transform.position), nextCellIndex))
+                var currentCellIndex = cellManager.GetCellIndexByPosition(transform.position);
+
+                if (!cellManager.CheckWall(currentCellIndex, GetInputVector().normalized))
+                {
                     nextPosition = cellManager.GetPositionByCellIndex(nextCellIndex);
+                }
+                else if (cellManager.CheckExit(currentCellIndex, GetInputVector().normalized))
+                {
+                    settings.Win = true;
+                }
             }
             else if (moveController == 2 && transform.position != target.position)
             {

@@ -19,9 +19,7 @@ public class WallsCreator : MonoBehaviour
         Vector3 deltaInColumn = new Vector3(-labirintSize, 0, 1);
         var cellDeltaPosition = new Vector3(0, 0, 0.5f);
 
-        Vector3 exit = new Vector3(Random.Range(0, 2), Random.Range(0,2), Random.Range(0, labirintSize));
-        if (exit.y > 0)
-            exit.y = labirintSize;
+        Vector3 exitDir = Vector3.back;
 
         var maskWall = CellManager.maskWallBottom;
         for (int v = 0; v < 2; v++) //горизонталь + вертикаль
@@ -34,11 +32,17 @@ public class WallsCreator : MonoBehaviour
                     {
                         cellDeltaPosition = -cellDeltaPosition;
                         maskWall = maskWall >> 2;
+                        exitDir = -exitDir;
                     }
 
-                    if ((cellManager.GetCellByPosition(position + cellDeltaPosition) & maskWall) != 0 )
+                    var currentCellIndex = cellManager.GetCellIndexByPosition(position + cellDeltaPosition);
+                    if ((cellManager.cells[currentCellIndex] & maskWall) != 0 )
                     {
-                        Instantiate(WallGameObject, position, Quaternion.Euler(rotation), walls.transform);
+                        var instance = Instantiate(WallGameObject, position, Quaternion.Euler(rotation), walls.transform);
+                        if (cellManager.CheckExit(currentCellIndex, exitDir))
+                        {
+                            instance.GetComponent<MeshRenderer>().material.color = Color.blue;
+                        }
                     }
                     position += deltaInRow;
                 }
@@ -52,6 +56,8 @@ public class WallsCreator : MonoBehaviour
            
             maskWall = CellManager.maskWallLeft;
             cellDeltaPosition = new Vector3(0.5f, 0, 0);
+
+            exitDir = Vector3.left;
         }
     }
 

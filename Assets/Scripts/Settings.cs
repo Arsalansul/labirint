@@ -8,6 +8,7 @@ namespace Assets.Scripts
         public int labirintDifficulty;  //от 0 до 3
 
         public bool GameOver;
+        public bool Win;
 
         public Vector2 playerStartPosition;
         public int enemyCount;

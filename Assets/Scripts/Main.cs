@@ -41,6 +41,11 @@ namespace Assets.Scripts
             {
                 GameOver();
             }
+
+            if (settings.Win)
+            {
+                Win();
+            }
         }
 
         private void Quit()
@@ -64,6 +69,15 @@ namespace Assets.Scripts
             game.wallsCreator.DestoryWalls();
             game = null;
             settings.GameOver = false;
+        }
+
+        private void Win()
+        {
+            game.unitManager.DestroyUnits();
+            canvasGameObject.SetActive(true);
+            game.wallsCreator.DestoryWalls();
+            game = null;
+            settings.Win = false;
         }
 
         private void SetSettingsValues(int level)

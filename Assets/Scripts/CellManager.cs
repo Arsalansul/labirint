@@ -10,10 +10,10 @@ namespace Assets.Scripts
     {
         public ulong[] cells;
 
-        // 1-4 bits - walls
-        // 5-8 - unvisited neighbours (for LabirintCreator)
+        // 1 - 4 bits - walls LBRT
+        // 5 - 8 - unvisited neighbours LBRT (for LabirintCreator)
         // 9 - visited  (for LabirintCreator)
-        // 10-17 - came from cell index (for LabirintCreator)
+        // 10 - 17 - came from cell index (for LabirintCreator)
 
         // 18 - 25 - came from cell index (for PathFinder)
         // 26 - in open list (A Star терминология) (for PathFinder)
@@ -23,6 +23,9 @@ namespace Assets.Scripts
         // 44 - 51 - move to cell index (for PathFinder)
 
         // 52 - coin in this cell
+        // 53 - can't spawn coin in this cell
+
+        // 54 - 57 - exit LBRT (for LabirintCreator)
 
         public const ulong maskWallTop = 1;
         public const ulong maskWallRight = (ulong)1 << 1;
@@ -54,11 +57,18 @@ namespace Assets.Scripts
         public const int HFirstBitPF = 35; //for path finder
         public const ulong maskMoveTo = (((ulong)1 << 8) - 1) << 43; //for path finder
         public const int MoveToIndexFirstBitPF = 43; //for path finder
+
         public const ulong maskAllPF = (((ulong)1 << 34) - 1) << 17; //for path finder
 
         public const ulong maskCoin = (ulong)1 << 51; //coin in this cell
         public const ulong maskCoinNegativePoint = (ulong)1 << 52; //can't spawn coin in this cell
 
+        public const ulong maskExitTop = (ulong)1 << 53;
+        public const ulong maskExitRight = (ulong)1 << 54;
+        public const ulong maskExitBottom = (ulong)1 << 55;
+        public const ulong maskExitLeft = (ulong)1 << 56;
+
+        public const ulong maskExitAll = (((ulong)1 << 4) - 1) << 53;
 
         private readonly int labirintSize;
 
@@ -324,30 +334,26 @@ namespace Assets.Scripts
             return (int)((cells[cellIndex] & maskMoveTo) >> MoveToIndexFirstBitPF);
         }
 
-        public bool CheckWall(int cellIndex, int neighbourIndex)
+        public bool CheckWall(int cellIndex, Vector3 dir)
         {
-            if (neighbourIndex < 0 || neighbourIndex >= labirintSize * labirintSize)
-                return true;
-
-            var indexDif = cellIndex - neighbourIndex;
-            if (indexDif == -labirintSize && (cells[cellIndex] & maskWallTop) > 0)
+            ulong mask = maskWallTop;
+            if (dir.z > 0)
             {
-                return true;
+                mask = maskWallTop;
             }
-            if (indexDif == -1 && (cells[cellIndex] & maskWallRight) > 0)
+            else if (dir.x > 0)
             {
-                return true;
+                mask = maskWallRight;
             }
-             if (indexDif == labirintSize && (cells[cellIndex] & maskWallBottom) > 0)
+            else if (dir.z < 0)
             {
-                return true;
+                mask = maskWallBottom;
             }
-            if (indexDif == 1 && (cells[cellIndex] & maskWallLeft) > 0)
+            else if (dir.x < 0)
             {
-                return true;
+                mask = maskWallLeft;
             }
-
-            return false;
+            return (cells[cellIndex] & mask) != 0;
         }
 
         public void SetCoinInCell(int cellIndex)
@@ -386,6 +392,52 @@ namespace Assets.Scripts
         public void AddToCloseList(int cellIndex)
         {
             cells[cellIndex] |= maskCloseListPF;
+        }
+
+        public void SetExit(int side, int number)
+        {
+            var cellIndex = 0;
+            var mask = maskExitTop << side;
+
+            switch (side)
+            {
+                case 0:
+                    cellIndex = number + labirintSize * (labirintSize - 1);
+                    break;
+                case 1:
+                    cellIndex = labirintSize * (labirintSize - number) - 1;
+                    break;
+                case 2:
+                    cellIndex = number;
+                    break;
+                case 3:
+                    cellIndex = labirintSize * (labirintSize - 1 - number);
+                    break;
+            }
+            cells[cellIndex] &= ~maskExitAll;
+            cells[cellIndex] |= mask;
+        }
+
+        public bool CheckExit(int cellIndex, Vector3 dir)
+        {
+            ulong mask = maskExitTop;
+            if (dir.z > 0)
+            {
+                mask = maskExitTop;
+            }
+            else if (dir.x > 0)
+            {
+                mask = maskExitRight;
+            }
+            else if (dir.z < 0)
+            {
+                mask = maskExitBottom;
+            }
+            else if (dir.x < 0)
+            {
+                mask = maskExitLeft;
+            }
+            return (cells[cellIndex] & mask) != 0;
         }
     }
 }
