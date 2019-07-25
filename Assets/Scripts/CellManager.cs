@@ -22,6 +22,8 @@ namespace Assets.Scripts
         // 36 - 43 - h value (A Star терминология) (for PathFinder)
         // 44 - 51 - move to cell index (for PathFinder)
 
+        // 52 - coin in this cell
+
         public const ulong maskWallTop = 1;
         public const ulong maskWallRight = (ulong)1 << 1;
         public const ulong maskWallBottom = (ulong)1 << 2;
@@ -53,6 +55,8 @@ namespace Assets.Scripts
         public const ulong maskMoveTo = (((ulong)1 << 8) - 1) << 43; //for path finder
         public const int MoveToIndexFirstBitPF = 43; //for path finder
         public const ulong maskAllPF = (((ulong)1 << 34) - 1) << 17; //for path finder
+
+        public const ulong maskCoin = (ulong)1 << 51; //coin in this cell
 
 
         private readonly int labirintSize;
@@ -325,6 +329,11 @@ namespace Assets.Scripts
             }
 
             return false;
+        }
+
+        public void SetCoinInCell(int cellIndex)
+        {
+            cells[cellIndex] |= maskCoin;
         }
     }
 }

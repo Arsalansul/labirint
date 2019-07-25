@@ -41,13 +41,17 @@ namespace Assets.Scripts
 
             coinParent = new GameObject("Coins");
             coinParent.transform.SetParent(Units.transform);
-            for (var i = 0; i < settings.coinCount; i++)
+
+            GenerateCoinPositions(settings, cellManager);
+            for (var i = 0; i < cellManager.cells.Length; i++)
             {
+                if ((cellManager.cells[i] & CellManager.maskCoin) == 0)
+                    continue;
+
                 var coin = Instantiate(Resources.Load("Prefabs/Coin"), coinParent.transform) as GameObject;
 
                 var coinUnit = coin.GetComponent<Unit>();
-                var coinPos = new Vector2(Random.Range(0, settings.labirintSize), Random.Range(0, settings.labirintSize));
-                coinUnit.Pos = coinPos;
+                coin.transform.position = cellManager.GetPositionByCellIndex(i);
                 coinUnit.moveController = 0;
                 coinUnit.cellManager = cellManager;
             }
@@ -58,9 +62,9 @@ namespace Assets.Scripts
             Destroy(Units);
         }
 
-        private void GetCoinPosition(Settings settings)
+        private void GenerateCoinPositions(Settings settings, CellManager cellManager)
         {
-            int[] coinPositions = new int[settings.coinCount];
+            cellManager.SetCoinInCell(Random.Range(0, settings.labirintSize));
         }
     }
 }
