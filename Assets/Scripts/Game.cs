@@ -30,7 +30,7 @@ namespace Assets.Scripts
 
         public void LoadSceneObjects()
         {
-            labirintManager.CreateLabirint(settings);
+            labirintManager.LabirintCreator(settings);
             wallsCreator.CreateWalls(cellManager, settings);
             
             unitManager.InstantiateUnits(settings, cellManager);

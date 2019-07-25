@@ -11,9 +11,9 @@ namespace Assets.Scripts
         public ulong[] cells;
 
         // 1-4 bits - walls
-        // 5-8 - unvisited neighbours (for CreateLabirint)
-        // 9 - visited  (for CreateLabirint)
-        // 10-17 - came from cell index (for CreateLabirint)
+        // 5-8 - unvisited neighbours (for LabirintCreator)
+        // 9 - visited  (for LabirintCreator)
+        // 10-17 - came from cell index (for LabirintCreator)
 
         // 18 - 25 - came from cell index (for PathFinder)
         // 26 - in open list (A Star терминология) (for PathFinder)
