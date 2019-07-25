@@ -75,6 +75,7 @@ namespace Assets.Scripts
             settings.coinCount = level % 20 + 3;
             settings.enemySpeed = 0.9f;
             settings.playerSpeed = 1;
+            settings.enemyDetectTargetDistance = 4 + level / 20;
         }
     }
 }

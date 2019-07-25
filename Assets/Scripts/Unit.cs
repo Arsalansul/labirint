@@ -54,7 +54,7 @@ namespace Assets.Scripts
                 if (!cellManager.CheckWall(cellManager.GetCellIndexByPosition(transform.position), nextCellIndex))
                     nextPosition = cellManager.GetPositionByCellIndex(nextCellIndex);
             }
-            else if (moveController == 2 && transform.position != target.position)
+            else if (moveController == 2 && transform.position != target.position && DetectTarget())
             {
                 var cellIndexToMove = pathFinder.GiveCellIndexToMove(
                     cellManager.GetCellIndexByPosition(transform.position),
@@ -103,6 +103,12 @@ namespace Assets.Scripts
         {
             return Input.GetAxis("Horizontal") * Input.GetAxis("Horizontal") +
                    Input.GetAxis("Vertical") * Input.GetAxis("Vertical") > 0.05f;
+        }
+
+        private bool DetectTarget()
+        {
+            var distance = (target.transform.position - transform.position).magnitude;
+            return distance < settings.enemyDetectTargetDistance;
         }
     }
 }

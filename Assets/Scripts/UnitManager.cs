@@ -32,6 +32,7 @@ namespace Assets.Scripts
 
                 var enemyUnit = enemy.GetComponent<Unit>();
                 var enemyPos = new Vector2(Random.Range(0, settings.labirintSize), Random.Range(0, settings.labirintSize));
+                enemyUnit.settings = settings;
                 enemyUnit.Pos = enemyPos;
                 enemyUnit.moveController = 2;
                 enemyUnit.cellManager = cellManager;
