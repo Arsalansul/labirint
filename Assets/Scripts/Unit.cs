@@ -34,6 +34,7 @@ namespace Assets.Scripts
             pathFinder = new PathFinder(cellManager);
             nextPosition = transform.position;
             startPosition = transform.position;
+
             changeAxis = new Vector2(1,0);
         }
 
@@ -68,7 +69,7 @@ namespace Assets.Scripts
                 }
                 else
                 {
-                    var randomCellInDistance = pathFinder.GetRandomCellIndexInDistance(currentCell, 3);
+                    var randomCellInDistance = pathFinder.GetRandomCellIndexInDistance(cellManager.GetCellIndexByPosition(startPosition), settings.enemyPatrolDistance);
                     
                     cellIndexToMove = pathFinder.GiveCellIndexToMove(currentCell, randomCellInDistance);
                 }
@@ -124,7 +125,10 @@ namespace Assets.Scripts
                 detectTarget = true;
 
             if (distance > settings.enemyLostTargetDistance)
+            {
                 detectTarget = false;
+                startPosition = transform.position;
+            }
         }
     }
 }

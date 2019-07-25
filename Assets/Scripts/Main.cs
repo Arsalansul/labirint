@@ -85,6 +85,8 @@ namespace Assets.Scripts
             {
                 settings.enemyLostTargetDistance ++;
             }
+
+            settings.enemyPatrolDistance = 3;
         }
     }
 }

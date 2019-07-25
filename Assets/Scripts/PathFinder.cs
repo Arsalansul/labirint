@@ -14,10 +14,9 @@ namespace Assets.Scripts
         private void FindPath(int currentCellIndex, int endCellIndex)
         {
             cellManager.cells[currentCellIndex] |= CellManager.maskOpenListPF; //add current cell to open list
-            var loop = 0;
+
             while (cellManager.OpenListCount() > 0)
             {
-                loop++;
                 currentCellIndex = cellManager.GetCellIndexWithLeastF(); // let the currentNode equal the node with the least f value
 
                 cellManager.cells[currentCellIndex] &= ~CellManager.maskOpenListPF; //remove from open list
@@ -61,12 +60,6 @@ namespace Assets.Scripts
                     // Add the child to the openList
                     cellManager.cells[childIndex] |= CellManager.maskOpenListPF;
                 }
-
-                if (loop > 300)
-                {
-                    Debug.LogError("path not found");
-                    break;
-                }
             }
         }
 
@@ -74,11 +67,8 @@ namespace Assets.Scripts
         {
             cellManager.AddToOpenList(cellIndex);
 
-            var loop = 0;
             while (cellManager.OpenListCount() > 0)
             {
-                loop++;
-
                 cellIndex = cellManager.GetCellIndexFromOpenList();
 
                 cellManager.RemoveFromOpenList(cellIndex);
@@ -107,14 +97,8 @@ namespace Assets.Scripts
                     cellManager.RememberG(childIndex, g);
 
                     // Add the child to the openList
-                    if (g < (ulong)distance)
+                    if (g < (ulong) distance)
                         cellManager.AddToOpenList(childIndex);
-                }
-
-                if (loop > 300)
-                {
-                    Debug.LogError("open list does not end");
-                    break;
                 }
             }
         }
@@ -125,21 +109,12 @@ namespace Assets.Scripts
 
             //выстраиваем путь от конца к началу
             var currentCellIndex = endCellIndex;
-            var loop = 0;
             while (currentCellIndex != startCellIndex)
             {
-                loop++;
-                
                 var nextIndex = cellManager.GetCameFromIndexPF(currentCellIndex);
 
                 cellManager.RememberMoveToIndex(nextIndex, currentCellIndex); //записываем путь
 
-                if (loop > 1000)
-                {
-                    Debug.LogError(" h " + cellManager.GetH(nextIndex));
-                    cellManager.ClearCellsAfterPF();
-                    return startCellIndex;
-                }
                 currentCellIndex = nextIndex;
             }
 
@@ -154,17 +129,14 @@ namespace Assets.Scripts
         {
             FindCellsInDistance(cellIndex, distance);
 
-            for (int i = 0; i < cellManager.cells.Length; i++)
+            var randomIndex = Random.Range(0, cellManager.cells.Length);
+            while (cellManager.GetG(randomIndex) != 0)
             {
-                var randomIndex = Random.Range(0, cellManager.cells.Length);
-                if (cellManager.GetG(randomIndex) != 0)
-                {
-                    cellManager.ClearCellsAfterPF();
-                    return randomIndex;
-                }
+                randomIndex = Random.Range(0, cellManager.cells.Length);
             }
+
             cellManager.ClearCellsAfterPF();
-            return cellIndex;
+            return randomIndex;
         }
     }
 }

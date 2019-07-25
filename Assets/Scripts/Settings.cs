@@ -17,5 +17,6 @@ namespace Assets.Scripts
         public float playerSpeed;
         public float enemyDetectTargetDistance;
         public float enemyLostTargetDistance;
+        public int enemyPatrolDistance;
     }
 }

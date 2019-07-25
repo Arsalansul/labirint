@@ -16,11 +16,11 @@ namespace Assets.Scripts
         {
             for (int i = 0; i < settings.labirintDifficulty; i++)
             {
-                Labirint(settings);
+                Labirint();
             }
         }
 
-        private void Labirint(Settings settings)
+        private void Labirint()
         {
             var cells = cellManager.cells;
             cellManager.SetUnvisitedNeighbours();
