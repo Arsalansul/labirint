@@ -48,8 +48,6 @@ namespace Assets.Scripts
                     }
                 }
             }
-
-            //ChangeDifficulty(settings);
         }
 
         private void ChangeDifficulty(Settings settings)

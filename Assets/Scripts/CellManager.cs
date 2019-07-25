@@ -278,26 +278,31 @@ namespace Assets.Scripts
 
         public void RememberCameFromIndexPF(int cellIndex, int cameFromIndex)
         {
+            cells[cellIndex] &= ~maskCameFromPF;
             cells[cellIndex] |= (ulong)cameFromIndex << CameFromFirstBitPF;
         }
 
         public void RememberCameFromIndexLC(int cellIndex, int cameFromIndex)
         {
+            cells[cellIndex] &= ~maskCameFromLC;
             cells[cellIndex] |= (ulong)cameFromIndex << CameFromFirstBitLC;
         }
 
         public void RememberG(int cellIndex, ulong g)
         {
+            cells[cellIndex] &= ~maskGPF;
             cells[cellIndex] |= g << GFirstBitPF;
         }
 
         public void RememberH(int cellIndex, ulong h)
         {
+            cells[cellIndex] &= ~maskHPF;
             cells[cellIndex] |= h << HFirstBitPF;
         }
 
         public void RememberMoveToIndex(int cellIndex, int moveToIndex)
         {
+            cells[cellIndex] &= ~maskMoveTo;
             cells[cellIndex] |= (ulong)moveToIndex << MoveToIndexFirstBitPF;
         }
 

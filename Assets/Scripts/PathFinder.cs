@@ -40,8 +40,6 @@ namespace Assets.Scripts
                     // Child is on the closedList
                     if ((cellManager.cells[childIndex] & CellManager.maskCloseListPF) != 0)
                         continue;
-
-                    cellManager.RememberCameFromIndexPF(childIndex,currentCellIndex); //запоминаем откуда пришли
                     
                     // Create the f, g, and h values
                     //child.g = currentNode.g + distance between child and current
@@ -49,6 +47,7 @@ namespace Assets.Scripts
                     //child.f = child.g + child.h;
 
                     var g = cellManager.GetG(currentCellIndex) + 1;
+
                     if ((cellManager.cells[childIndex] & CellManager.maskOpenListPF) != 0 && g > cellManager.GetG(childIndex))
                         continue;
 
@@ -56,6 +55,8 @@ namespace Assets.Scripts
 
                     var h = cellManager.Distance(childIndex, endCellIndex);
                     cellManager.RememberH(childIndex, (ulong) h);
+
+                    cellManager.RememberCameFromIndexPF(childIndex, currentCellIndex); //запоминаем откуда пришли
 
                     // Add the child to the openList
                     cellManager.cells[childIndex] |= CellManager.maskOpenListPF;
@@ -69,7 +70,7 @@ namespace Assets.Scripts
             }
         }
 
-        public void FindCellsInDistance(int cellIndex, int distance)  //в бит маску G записываем длину пути до этой ячейки
+        public void FindCellsInDistance(int cellIndex, int distance)  //в бит маску G записывается длина пути, этим и будем пользоваться
         {
             cellManager.AddToOpenList(cellIndex);
 
@@ -99,6 +100,7 @@ namespace Assets.Scripts
                     //cellManager.CoinNegativePoint(childIndex);
 
                     var g = cellManager.GetG(cellIndex) + 1;
+
                     if ((cellManager.cells[childIndex] & CellManager.maskOpenListPF) != 0 && g > cellManager.GetG(childIndex))
                         continue;
 
@@ -129,10 +131,7 @@ namespace Assets.Scripts
                 loop++;
                 
                 var nextIndex = cellManager.GetCameFromIndexPF(currentCellIndex);
-                if (nextIndex > 224 || nextIndex < 0)
-                {
-                    Debug.LogError("out of range. next index " + nextIndex + " current index " + currentCellIndex + " current cell " + cellManager.cells[currentCellIndex]);
-                }
+
                 cellManager.RememberMoveToIndex(nextIndex, currentCellIndex); //записываем путь
 
                 if (loop > 1000)
