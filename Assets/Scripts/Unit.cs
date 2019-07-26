@@ -90,7 +90,6 @@ namespace Assets.Scripts
             if (other.tag == "Player" && gameObject.tag == "coin")
             {
                 settings.coinCount--;
-                Debug.Log(settings.coinCount);
                 Destroy(gameObject);
             }
         }
