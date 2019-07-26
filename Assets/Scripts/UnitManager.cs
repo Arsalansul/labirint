@@ -62,6 +62,7 @@ namespace Assets.Scripts
                 coin.transform.position = cellManager.GetPositionByCellIndex(i);
                 coinUnit.moveController = 0;
                 coinUnit.cellManager = cellManager;
+                coinUnit.settings = settings;
             }
         }
 

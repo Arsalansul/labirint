@@ -58,7 +58,7 @@ namespace Assets.Scripts
                     var nextCellIndex = cellManager.GetCellIndexByPosition(transform.position + inputVector);
                     nextPosition = cellManager.GetPositionByCellIndex(nextCellIndex);
                 }
-                else if (cellManager.CheckExit(currentCellIndex, inputVector))
+                else if (settings.coinCount==0 && cellManager.CheckExit(currentCellIndex, inputVector))
                 {
                     settings.Win = true;
                 }
@@ -87,8 +87,12 @@ namespace Assets.Scripts
             if (other.tag == "enemy" && gameObject.tag == "Player")
                 settings.GameOver = true;
 
-            if (other.tag == "Player")
+            if (other.tag == "Player" && gameObject.tag == "coin")
+            {
+                settings.coinCount--;
+                Debug.Log(settings.coinCount);
                 Destroy(gameObject);
+            }
         }
 
         private Vector3 GetInputVector()
