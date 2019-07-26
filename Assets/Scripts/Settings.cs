@@ -5,7 +5,7 @@ namespace Assets.Scripts
     public class Settings
     {
         public int labirintSize;  //labirintSize*labirintSize ограничено 8 битами
-        public int labirintDifficulty;  //от 0 до 3
+        public int labirintDifficulty;  //от 1.
 
         public bool GameOver;
         public bool Win;
