@@ -13,14 +13,14 @@ namespace Assets.Scripts
         
         private void FindPath(int currentCellIndex, int endCellIndex)
         {
-            cellManager.cells[currentCellIndex] |= CellManager.maskOpenListPF; //add current cell to open list
+            cellManager.AddToOpenList(currentCellIndex);
 
             while (cellManager.OpenListCount() > 0)
             {
                 currentCellIndex = cellManager.GetCellIndexWithLeastF(); // let the currentNode equal the node with the least f value
 
-                cellManager.cells[currentCellIndex] &= ~CellManager.maskOpenListPF; //remove from open list
-                cellManager.cells[currentCellIndex] |= CellManager.maskCloseListPF; //add to close list
+                cellManager.RemoveFromOpenList(currentCellIndex);
+                cellManager.AddToCloseList(currentCellIndex);
 
                 if (currentCellIndex == endCellIndex) //found the end
                 {
@@ -37,7 +37,7 @@ namespace Assets.Scripts
                     var childIndex = currentCellIndex + cellManager.GetNeighbourRelativePosition(maskWall << 4);
                     
                     // Child is on the closedList
-                    if ((cellManager.cells[childIndex] & CellManager.maskCloseListPF) != 0)
+                    if (cellManager.CloseListContain(childIndex))
                         continue;
                     
                     // Create the f, g, and h values
@@ -47,7 +47,7 @@ namespace Assets.Scripts
 
                     var g = cellManager.GetG(currentCellIndex) + 1;
 
-                    if ((cellManager.cells[childIndex] & CellManager.maskOpenListPF) != 0 && g > cellManager.GetG(childIndex))
+                    if (cellManager.OpenListContain(childIndex) && g > cellManager.GetG(childIndex))
                         continue;
 
                     cellManager.RememberG(childIndex, g);
@@ -58,7 +58,7 @@ namespace Assets.Scripts
                     cellManager.RememberCameFromIndexPF(childIndex, currentCellIndex); //запоминаем откуда пришли
 
                     // Add the child to the openList
-                    cellManager.cells[childIndex] |= CellManager.maskOpenListPF;
+                    cellManager.AddToOpenList(childIndex);
                 }
             }
         }
@@ -84,14 +84,12 @@ namespace Assets.Scripts
                     var childIndex = cellIndex + cellManager.GetNeighbourRelativePosition(maskWall << 4);
 
                     // Child is on the closedList
-                    if ((cellManager.cells[childIndex] & CellManager.maskCloseListPF) != 0)
+                    if (cellManager.CloseListContain(childIndex))
                         continue;
-
-                    //cellManager.CoinNegativePoint(childIndex);
-
+                    
                     var g = cellManager.GetG(cellIndex) + 1;
 
-                    if ((cellManager.cells[childIndex] & CellManager.maskOpenListPF) != 0 && g > cellManager.GetG(childIndex))
+                    if (cellManager.OpenListContain(childIndex) && g > cellManager.GetG(childIndex))
                         continue;
 
                     cellManager.RememberG(childIndex, g);

@@ -394,6 +394,16 @@ namespace Assets.Scripts
             cells[cellIndex] |= maskCloseListPF;
         }
 
+        public bool CloseListContain(int cellIndex)
+        {
+            return (cells[cellIndex] & maskCloseListPF) != 0;
+        }
+
+        public bool OpenListContain(int cellIndex)
+        {
+            return (cells[cellIndex] & maskOpenListPF) != 0;
+        }
+
         public void SetExit(int side, int number)
         {
             var cellIndex = 0;
