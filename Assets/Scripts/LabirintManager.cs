@@ -7,9 +7,9 @@ namespace Assets.Scripts
     {
         private readonly CellManager cellManager;
 
-        public LabirintManager(CellManager _cellManager)
+        public LabirintManager(CellManager cellManager)
         {
-            cellManager = _cellManager;
+            this.cellManager = cellManager;
         }
 
         public void LabirintCreator(Settings settings)

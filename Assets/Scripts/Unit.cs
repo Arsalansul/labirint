@@ -40,12 +40,12 @@ namespace Assets.Scripts
         {
             if (moveController > 0)
             {
-                GenarateNextPosition();
+                GenerateNextPosition();
                 transform.position = Vector3.MoveTowards(transform.position, nextPosition, Time.deltaTime * speed);
             }
         }
 
-        private void GenarateNextPosition()
+        private void GenerateNextPosition()
         {
             if ((transform.position - nextPosition).magnitude > 0.05f) return;
 

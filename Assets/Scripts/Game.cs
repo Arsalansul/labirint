@@ -15,9 +15,9 @@ namespace Assets.Scripts
         private Camera mainCamera;
         private MainCamera mainCameraComponent;
 
-        public Game(Settings _settings)
+        public Game(Settings settings)
         {
-            settings = _settings;
+            this.settings = settings;
             cellManager = new CellManager(settings.labirintSize);
             labirintManager = new LabirintManager(cellManager);
             wallsCreator = new WallsCreator();
@@ -25,7 +25,6 @@ namespace Assets.Scripts
             mainCamera = Camera.main;
             mainCameraComponent = mainCamera.GetComponent<MainCamera>();
             mainCameraComponent.settings = settings;
-            wallsCreator.WallGameObject = Resources.Load<GameObject>("Prefabs/Wall");
         }
 
         public void LoadSceneObjects()

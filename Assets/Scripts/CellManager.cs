@@ -1,15 +1,15 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Numerics;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
+using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
 
 namespace Assets.Scripts
 {
     public class CellManager
     {
-        public ulong[] cells;
-
         // 1 - 4 bits - walls LBRT
         // 5 - 8 - unvisited neighbours LBRT (for LabirintCreator)
         // 9 - visited  (for LabirintCreator)
@@ -28,53 +28,55 @@ namespace Assets.Scripts
         // 54 - 57 - exit LBRT (for LabirintCreator)
 
         public const ulong maskWallTop = 1;
-        public const ulong maskWallRight = (ulong)1 << 1;
-        public const ulong maskWallBottom = (ulong)1 << 2;
-        public const ulong maskWallLeft = (ulong)1 << 3;
+        public const ulong maskWallRight = 1UL << 1;
+        public const ulong maskWallBottom = 1UL << 2;
+        public const ulong maskWallLeft = 1UL << 3;
                      
-        public const ulong maskAllWalls = ((ulong)1 << 4) - 1;
+        public const ulong maskAllWalls = maskWallTop | maskWallRight | maskWallBottom | maskWallLeft;
                      
-        public const ulong maskNeighbourTop = (ulong)1 << 4;
-        public const ulong maskNeighbourRight = (ulong)1 << 5;
-        public const ulong maskNeighbourBottom = (ulong)1 << 6;
-        public const ulong maskNeighbourLeft = (ulong)1 << 7;
+        public const ulong maskNeighbourTop = 1UL << 4;
+        public const ulong maskNeighbourRight = 1UL << 5;
+        public const ulong maskNeighbourBottom = 1UL << 6;
+        public const ulong maskNeighbourLeft = 1UL << 7;
 
-        public const ulong maskAllNeighbours = (((ulong)1 << 4) - 1) << 4;
+        public const ulong maskAllNeighbours = maskNeighbourTop | maskNeighbourRight | maskNeighbourBottom | maskNeighbourLeft;
 
-        public const ulong maskVisited = (ulong)1 << 8;
+        public const ulong maskVisited = 1UL << 8;
                     
-        public const ulong maskCameFromLC = (((ulong)1 << 8) - 1) << 9; //for labirint creator
+        public const ulong maskCameFromLC = ((1UL << 8) - 1) << 9; //for labirint creator
         public const int CameFromFirstBitLC = 9; //for labirint creator
 
-        public const ulong maskCameFromPF = (((ulong)1 << 8) - 1) << 17; //for path finder
+        public const ulong maskCameFromPF = ((1UL << 8) - 1) << 17; //for path finder
         public const int CameFromFirstBitPF = 17; //for path finder
-        public const ulong maskOpenListPF = (ulong)1 << 25; //for path finder
+        public const ulong maskOpenListPF = 1UL << 25; //for path finder
         public const int OpenListFirstBitPF = 25; //for path finder
-        public const ulong maskCloseListPF = (ulong)1 << 26; //for path finder
-        public const ulong maskGPF = (((ulong)1 << 8) - 1) << 27; //for path finder
+        public const ulong maskCloseListPF = 1UL << 26; //for path finder
+        public const ulong maskGPF = ((1UL << 8) - 1) << 27; //for path finder
         public const int GFirstBitPF = 27; //for path finder
-        public const ulong maskHPF = (((ulong)1 << 8) - 1) << 35; //for path finder
+        public const ulong maskHPF = ((1UL << 8) - 1) << 35; //for path finder
         public const int HFirstBitPF = 35; //for path finder
-        public const ulong maskMoveTo = (((ulong)1 << 8) - 1) << 43; //for path finder
+        public const ulong maskMoveTo = ((1UL << 8) - 1) << 43; //for path finder
         public const int MoveToIndexFirstBitPF = 43; //for path finder
 
-        public const ulong maskAllPF = (((ulong)1 << 34) - 1) << 17; //for path finder
+        public const ulong maskAllPF = ((1UL << 34) - 1) << 17; //for path finder
 
-        public const ulong maskCoin = (ulong)1 << 51; //coin in this cell
-        public const ulong maskCoinNegativePoint = (ulong)1 << 52; //can't spawn coin in this cell
+        public const ulong maskCoin = 1UL << 51; //coin in this cell
+        public const ulong maskCoinNegativePoint = 1UL << 52; //can't spawn coin in this cell
 
-        public const ulong maskExitTop = (ulong)1 << 53;
-        public const ulong maskExitRight = (ulong)1 << 54;
-        public const ulong maskExitBottom = (ulong)1 << 55;
-        public const ulong maskExitLeft = (ulong)1 << 56;
+        public const ulong maskExitTop = 1UL << 53;
+        public const ulong maskExitRight = 1UL << 54;
+        public const ulong maskExitBottom = 1UL << 55;
+        public const ulong maskExitLeft = 1UL << 56;
 
-        public const ulong maskExitAll = (((ulong)1 << 4) - 1) << 53;
+        public const ulong maskExitAll = maskExitTop | maskExitRight | maskExitBottom | maskExitLeft;
+
+        public ulong[] cells;
 
         private readonly int labirintSize;
 
-        public CellManager(int _labirintSize)
+        public CellManager(int labirintSize)
         {
-            labirintSize = _labirintSize;
+            this.labirintSize = labirintSize;
             cells = new ulong[labirintSize * labirintSize];
             DefaultCell();
         }
@@ -84,9 +86,9 @@ namespace Assets.Scripts
             for (var i = 0; i < cells.Length; i++)
             {
                 cells[i] |= maskAllWalls; //set walls
-
-                SetUnvisitedNeighbours();
             }
+
+            SetUnvisitedNeighbours();
         }
 
         public void SetUnvisitedNeighbours()

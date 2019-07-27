@@ -2,7 +2,7 @@
 
 namespace Assets.Scripts
 {
-    public class UnitManager : MonoBehaviour
+    public class UnitManager
     {
         private GameObject enemyParent;
         private GameObject coinParent;
@@ -17,7 +17,7 @@ namespace Assets.Scripts
         {
             Units = new GameObject("Units");
 
-            player = Instantiate(Resources.Load("Prefabs/Player"),Units.transform) as GameObject;
+            player = Object.Instantiate(Resources.Load("Prefabs/Player"),Units.transform) as GameObject;
 
             var playerUnit = player.GetComponent<Unit>();
             playerUnit.Pos = settings.playerStartPosition;
@@ -30,7 +30,7 @@ namespace Assets.Scripts
             enemyParent.transform.SetParent(Units.transform);
             for (var i = 0; i < settings.enemyCount; i++)
             {
-                var enemy = Instantiate(Resources.Load("Prefabs/Enemy"), enemyParent.transform) as GameObject;
+                var enemy = Object.Instantiate(Resources.Load("Prefabs/Enemy"), enemyParent.transform) as GameObject;
 
                 var enemyUnit = enemy.GetComponent<Unit>();
                 var enemyPos = new Vector2(Random.Range(0, settings.labirintSize), Random.Range(0, settings.labirintSize));
@@ -56,7 +56,7 @@ namespace Assets.Scripts
                 if ((cellManager.cells[i] & CellManager.maskCoin) == 0)
                     continue;
 
-                var coin = Instantiate(Resources.Load("Prefabs/Coin"), coinParent.transform) as GameObject;
+                var coin = Object.Instantiate(Resources.Load("Prefabs/Coin"), coinParent.transform) as GameObject;
 
                 var coinUnit = coin.GetComponent<Unit>();
                 coin.transform.position = cellManager.GetPositionByCellIndex(i);
@@ -68,7 +68,7 @@ namespace Assets.Scripts
 
         public void DestroyUnits()
         {
-            Destroy(Units);
+            Object.Destroy(Units);
         }
 
         private void GenerateCoinPosition(int distance, CellManager cellManager)

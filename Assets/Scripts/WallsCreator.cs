@@ -2,7 +2,7 @@
 
 namespace Assets.Scripts
 {
-    public class WallsCreator : MonoBehaviour
+    public class WallsCreator
     {
         public GameObject WallGameObject;
 
@@ -10,6 +10,7 @@ namespace Assets.Scripts
 
         public void CreateWalls(CellManager cellManager, Settings settings)
         {
+            WallGameObject = Resources.Load<GameObject>("Prefabs/Wall");
             walls = new GameObject("Walls");
             for (int i = 0; i < cellManager.cells.Length; i++)
             {
@@ -35,7 +36,7 @@ namespace Assets.Scripts
             {
                 var position = cellManager.GetPositionByCellIndex(cellIndex);
 
-                var instance = Instantiate(WallGameObject, position + deltaWallPosition, Quaternion.Euler(0, rotationY, 0), walls.transform);
+                var instance = Object.Instantiate(WallGameObject, position + deltaWallPosition, Quaternion.Euler(0, rotationY, 0), walls.transform);
                 if (cellManager.CheckExit(cellIndex, deltaWallPosition))
                 {
                     instance.GetComponent<MeshRenderer>().material.color = Color.blue;
@@ -45,7 +46,7 @@ namespace Assets.Scripts
 
         public void DestoryWalls()
         {
-            Destroy(walls);
+            Object.Destroy(walls);
         }
     }
 }

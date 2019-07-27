@@ -6,9 +6,9 @@ namespace Assets.Scripts
     public class PathFinder
     {
         private readonly CellManager cellManager;
-        public PathFinder(CellManager _cellManager)
+        public PathFinder(CellManager cellManager)
         {
-            cellManager = _cellManager;
+            this.cellManager = cellManager;
         }
         
         private void FindPath(int currentCellIndex, int endCellIndex)
