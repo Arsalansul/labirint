@@ -5,9 +5,10 @@ namespace Assets.Scripts
     public class MainCamera : MonoBehaviour
     {
         [HideInInspector] public Transform target;
+        [HideInInspector] public Settings settings;
+
         public Vector3 offset;
         public float smoothSpeed;
-        public Settings settings;
 
         void LateUpdate()
         {

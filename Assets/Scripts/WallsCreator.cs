@@ -4,13 +4,12 @@ namespace Assets.Scripts
 {
     public class WallsCreator
     {
-        public GameObject WallGameObject;
+        private GameObject WallGameObject = Resources.Load<GameObject>("Prefabs/Wall");
 
         private GameObject walls;
 
         public void CreateWalls(CellManager cellManager, Settings settings)
         {
-            WallGameObject = Resources.Load<GameObject>("Prefabs/Wall");
             walls = new GameObject("Walls");
             for (int i = 0; i < cellManager.cells.Length; i++)
             {

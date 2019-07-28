@@ -85,7 +85,9 @@ namespace Assets.Scripts
         private void OnTriggerEnter(Collider other)
         {
             if (other.tag == "enemy" && gameObject.tag == "Player")
+            {
                 settings.GameOver = true;
+            }
 
             if (other.tag == "Player" && gameObject.tag == "coin")
             {

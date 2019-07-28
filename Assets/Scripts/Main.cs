@@ -9,17 +9,14 @@ namespace Assets.Scripts
         public Button gameButton;
         public Button quitButton;
         public Dropdown levelsDropdown;
-        
-        private Settings settings;
 
+        private Settings settings = new Settings();
         private GameObject canvasGameObject;
-
-        private Game game;
+        
+        private GameModeManager gameModeManager;
 
         void Start()
         {
-            gameButton.onClick.AddListener(StartGame);
-            quitButton.onClick.AddListener(Quit);
             levelsDropdown.options.Clear();
             for (var i = 0; i < 50; i++)
             {
@@ -28,79 +25,36 @@ namespace Assets.Scripts
 
             levelsDropdown.value = 0;
 
-            settings = new Settings();
-
             canvasGameObject = GameObject.Find("Canvas");
 
             SceneManager.LoadScene("Game", LoadSceneMode.Additive);
+
+            gameModeManager = new GameModeManager()
+            {
+                canvasGO = canvasGameObject,
+                settings = settings
+            };
+
+            gameButton.onClick.AddListener(() => gameModeManager.StartGame(levelsDropdown.value));
+            quitButton.onClick.AddListener(Quit);
         }
 
         void Update()
         {
             if (settings.GameOver)
             {
-                GameOver();
+                gameModeManager.GameOver();
             }
 
             if (settings.Win)
             {
-                Win();
+                gameModeManager.Win();
             }
         }
 
         private void Quit()
         {
             Application.Quit();
-        }
-
-        private void StartGame()
-        {
-            SetSettingsValues(levelsDropdown.value);
-            game = new Game(settings);
-            SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(1));
-            game.LoadSceneObjects();
-            canvasGameObject.SetActive(false);
-        }
-
-        private void GameOver()
-        {
-            game.unitManager.DestroyUnits();
-            canvasGameObject.SetActive(true);
-            game.wallsCreator.DestoryWalls();
-            game = null;
-            settings.GameOver = false;
-        }
-
-        private void Win()
-        {
-            game.unitManager.DestroyUnits();
-            canvasGameObject.SetActive(true);
-            game.wallsCreator.DestoryWalls();
-            game = null;
-            settings.Win = false;
-        }
-
-        private void SetSettingsValues(int level)
-        {
-            settings.labirintSize = 15;
-            settings.labirintDifficulty = 2;
-
-            settings.playerStartPosition = new Vector2(settings.labirintSize / 2, settings.labirintSize / 2);
-
-            settings.enemyCount = level % 20 + 3;
-            settings.coinCount = level % 20 + 3;
-
-            settings.enemySpeed = 0.9f;
-            settings.playerSpeed = 1;
-
-            settings.enemyDetectTargetDistance = 4 + level / 20;
-            settings.enemyLostTargetDistance = 6 + level / 20;
-            if (level == 40)
-            {
-                settings.enemyLostTargetDistance ++;
-            }
-
-            settings.enemyPatrolDistance = 3;
         }
     }
 }

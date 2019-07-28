@@ -618,7 +618,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1364132118}
-  - component: {fileID: 1364132119}
   m_Layer: 0
   m_Name: Scripts
   m_TagString: Untagged
@@ -640,20 +639,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1364132119
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1364132117}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8b2fe9dfd4152043b633793a792ea31, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  WallGameObject: {fileID: 5722349213252135693, guid: bd9559a54215b4645bc361b98a37bad3,
-    type: 3}
 --- !u!1 &1393045406
 GameObject:
   m_ObjectHideFlags: 0

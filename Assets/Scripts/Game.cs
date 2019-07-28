@@ -25,9 +25,11 @@ namespace Assets.Scripts
             mainCamera = Camera.main;
             mainCameraComponent = mainCamera.GetComponent<MainCamera>();
             mainCameraComponent.settings = settings;
+
+            LoadSceneObjects();
         }
 
-        public void LoadSceneObjects()
+        private void LoadSceneObjects()
         {
             labirintManager.LabirintCreator(settings);
             wallsCreator.CreateWalls(cellManager, settings);
