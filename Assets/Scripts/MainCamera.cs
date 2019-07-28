@@ -1,48 +1,51 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class MainCamera : MonoBehaviour
+namespace Assets.Scripts
 {
-    [HideInInspector] public Transform target;
-    public Vector3 offset;
-    public float smoothSpeed;
-
-    void LateUpdate()
+    public class MainCamera : MonoBehaviour
     {
-        if (target)
-        {
-            FollowTarget();
-        }
-    }
+        [HideInInspector] public Transform target;
+        [HideInInspector] public Settings settings;
 
-    private void FollowTarget()
-    {
-        var desiredPosition = target.position + offset;
+        public Vector3 offset;
+        public float smoothSpeed;
 
-        var axisZLimeter = GetComponent<Camera>().orthographicSize;
-        var axisXLimeter = axisZLimeter * GetComponent<Camera>().aspect;
+        void LateUpdate()
+        {
+            if (target)
+            {
+                FollowTarget();
+            }
+        }
 
-        if (desiredPosition.x < axisXLimeter)
+        private void FollowTarget()
         {
-            desiredPosition.x = axisXLimeter;
-        }
-        else if (desiredPosition.x > Settings.Instance.gameSettings.labirintSize - axisXLimeter)
-        {
-            desiredPosition.x = Settings.Instance.gameSettings.labirintSize - axisXLimeter;
-        }
+            var desiredPosition = target.position + offset;
+
+            var axisZLimeter = GetComponent<Camera>().orthographicSize;
+            var axisXLimeter = axisZLimeter * GetComponent<Camera>().aspect;
+
+            if (desiredPosition.x < axisXLimeter)
+            {
+                desiredPosition.x = axisXLimeter;
+            }
+            else if (desiredPosition.x > settings.labirintSize - axisXLimeter)
+            {
+                desiredPosition.x = settings.labirintSize - axisXLimeter;
+            }
         
-        if (desiredPosition.z < axisZLimeter)
-        {
-            desiredPosition.z = axisZLimeter;
-        }
-        else if (desiredPosition.z > Settings.Instance.gameSettings.labirintSize - axisZLimeter)
-        {
-            desiredPosition.z = Settings.Instance.gameSettings.labirintSize - axisZLimeter;
-        }
+            if (desiredPosition.z < axisZLimeter)
+            {
+                desiredPosition.z = axisZLimeter;
+            }
+            else if (desiredPosition.z > settings.labirintSize - axisZLimeter)
+            {
+                desiredPosition.z = settings.labirintSize - axisZLimeter;
+            }
 
 
-        var smoothPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
-        transform.position = smoothPosition;
+            var smoothPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
+            transform.position = smoothPosition;
+        }
     }
 }

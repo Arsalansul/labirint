@@ -1,52 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Settings : MonoBehaviour
+namespace Assets.Scripts
 {
-    [System.Serializable]
-    public class GameSettings
+    public class Settings
     {
-        public int labirintSize;
-        [Range(0, 3)] public int labirintDifficulty;
-    }
+        public int labirintSize;  //labirintSize*labirintSize ограничено 8 битами
+        public int labirintDifficulty;  //от 1.
 
-    [System.Serializable]
-    public class WallSettings
-    {
-        public GameObject WallGameObject;
-    }
+        public bool GameOver;
+        public bool Win;
 
-    [System.Serializable]
-    public class PlayerSettings
-    {
-        public GameObject PlayerGameObject;
-        public float speed;
-    }
+        public Vector2 playerStartPosition;
+        public int enemyCount;
+        public int coinCount;
 
-    [System.Serializable]
-    public class EnemySettings
-    {
-        public GameObject EnemyrGameObject;
-        public float speed;
-    }
-
-    [System.Serializable]
-    public class CoinSettings
-    {
-        public GameObject CoinGameObject;
-    }
-
-    public static Settings Instance { get; private set; }
-
-    public GameSettings gameSettings;
-    public WallSettings wallSettings;
-    public PlayerSettings playerSettings;
-    public EnemySettings enemySettings;
-    public CoinSettings coinSettings;
-
-    private void Awake()
-    {
-        Instance = this;
+        public float enemySpeed;
+        public float playerSpeed;
+        public float enemyDetectTargetDistance;
+        public float enemyLostTargetDistance;
+        public int enemyPatrolDistance;
     }
 }
